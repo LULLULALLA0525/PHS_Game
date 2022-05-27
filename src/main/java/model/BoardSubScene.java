@@ -11,7 +11,7 @@ public class BoardSubScene extends SubScene {
     private final static int BOARD_WIDTH = 300;
     private final static int BOARD_HEIGHT = 166;
 
-    public BoardSubScene(int numOfPlayers) {
+    public BoardSubScene() {
         super(new AnchorPane(), BOARD_WIDTH, BOARD_HEIGHT);
         prefWidth(BOARD_WIDTH);
         prefHeight(BOARD_HEIGHT);
@@ -24,11 +24,6 @@ public class BoardSubScene extends SubScene {
 
         setLayoutX(34);
         setLayoutY(768);
-
-        BoardLabel boardLabel = new BoardLabel(numOfPlayers + " Players Mode");
-        boardLabel.setLayoutX(10);
-        boardLabel.setLayoutY(10);
-        root2.getChildren().add(boardLabel);
     }
 
     public AnchorPane getPane() {

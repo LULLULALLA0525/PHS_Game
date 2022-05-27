@@ -13,19 +13,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class PHSButton extends Button {
+public class PHSSmallButton extends Button {
 
     private final String FONT_PATH = "src/main/resources/FONTS/Cafe24Decobox.ttf";
-    private final static int BUTTON_WIDTH = 200;
+    private final static int BUTTON_WIDTH = 50;
     private final static int BUTTON_HEIGHT = 50;
 
-    private final BackgroundImage freeImage = new BackgroundImage(new Image(new File("src/main/resources/PNG/yellow_button.png").toURI().toString()),
-            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-    private final Background freeBackground = new Background(freeImage);
-    private final BackgroundImage pressedImage = new BackgroundImage(new Image(new File("src/main/resources/PNG/yellow_button_pressed.png").toURI().toString()),
-            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-    private final Background pressedBackground = new Background(pressedImage);
-    public PHSButton(String text) {
+    private final Background freeBackground = new Background(new BackgroundImage(new Image(new File("src/main/resources/PNG/yellow_small_button.png").toURI().toString()),
+            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT));
+    private final Background pressedBackground = new Background(new BackgroundImage(new Image(new File("src/main/resources/PNG/yellow_small_button_pressed.png").toURI().toString()),
+            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT));
+
+    public PHSSmallButton(String text) {
         setText(text);
         setButtonFont();
         setPrefWidth(BUTTON_WIDTH);
@@ -36,9 +35,9 @@ public class PHSButton extends Button {
 
     private void setButtonFont() {
         try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 23));
+            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 17));
         } catch (FileNotFoundException e) {
-            setFont(Font.font("Verdana", 23));
+            setFont(Font.font("Verdana", 17));
         }
         setStyle("-fx-text-fill: #381E0D;");
     }
@@ -87,7 +86,5 @@ public class PHSButton extends Button {
                 setEffect(null);
             }
         });
-
     }
-
 }

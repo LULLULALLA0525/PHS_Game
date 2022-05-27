@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.PlayLabel;
-import model.PHSButton;
+import model.PHSBigButton;
 import model.MainSubScene;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +35,7 @@ public class ViewManager {
 
     private MainSubScene sceneToHide;
 
-    List<PHSButton> menuButtons;
+    List<PHSBigButton> menuButtons;
 
     private int numOfPlayers;
     public ViewManager() {
@@ -84,8 +84,8 @@ public class ViewManager {
         mainPane.getChildren().add(creditSubScene);
     }
 
-    private PHSButton createStartButton() {
-        PHSButton startButton = new PHSButton("START");
+    private PHSBigButton createStartButton() {
+        PHSBigButton startButton = new PHSBigButton("START");
         startButton.setLayoutX(350);
         startButton.setLayoutY(300);
 
@@ -121,7 +121,7 @@ public class ViewManager {
         return mainStage;
     }
 
-    private void addMenuButton(@NotNull PHSButton button) {
+    private void addMenuButton(@NotNull PHSBigButton button) {
         button.setLayoutX(MENU_BUTTONS_START_X);
         button.setLayoutY(MENU_BUTTONS_START_Y + menuButtons.size() * 100);
         menuButtons.add(button);
@@ -137,7 +137,7 @@ public class ViewManager {
     }
 
     private void createPlayButton() {
-        PHSButton playButton = new PHSButton("PLAY");
+        PHSBigButton playButton = new PHSBigButton("PLAY");
         addMenuButton(playButton);
 
         playButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -149,7 +149,7 @@ public class ViewManager {
     }
 
     private void createScoreButton() {
-        PHSButton scoreButton = new PHSButton("SCORES");
+        PHSBigButton scoreButton = new PHSBigButton("SCORES");
         addMenuButton(scoreButton);
 
         scoreButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -161,7 +161,7 @@ public class ViewManager {
     }
 
     private void createHelpButton() {
-        PHSButton helpButton = new PHSButton("HELP");
+        PHSBigButton helpButton = new PHSBigButton("HELP");
         addMenuButton(helpButton);
 
         helpButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -173,7 +173,7 @@ public class ViewManager {
     }
 
     private void createCreditsButton() {
-        PHSButton creditsButton = new PHSButton("CREDITS");
+        PHSBigButton creditsButton = new PHSBigButton("CREDITS");
         addMenuButton(creditsButton);
 
         creditsButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -185,7 +185,7 @@ public class ViewManager {
     }
 
     private void createExitButton() {
-        PHSButton exitButton = new PHSButton("EXIT");
+        PHSBigButton exitButton = new PHSBigButton("EXIT");
         addMenuButton(exitButton);
 
         exitButton.setOnAction(new EventHandler<ActionEvent>() {

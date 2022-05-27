@@ -7,7 +7,7 @@ import javafx.scene.layout.*;
 import java.io.*;
 import java.util.ArrayList;
 
-public class PHSMap extends SubScene {
+public class MapSubScene extends SubScene {
 
     private static final int MAP_WIDTH = 700;
     private static final int MAP_HEIGHT = 700;
@@ -28,7 +28,7 @@ public class PHSMap extends SubScene {
     private static int mapWidth = 1;
     private static int startRow = 0;
 
-    public PHSMap() {
+    public MapSubScene() {
         super(new AnchorPane(), MAP_WIDTH, MAP_HEIGHT);
         prefWidth(MAP_WIDTH);
         prefHeight(MAP_HEIGHT);
