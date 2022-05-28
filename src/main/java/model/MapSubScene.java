@@ -2,6 +2,7 @@ package model;
 
 import javafx.scene.SubScene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import java.io.*;
@@ -13,6 +14,8 @@ public class MapSubScene extends SubScene {
     private static final int MAP_HEIGHT = 700;
 
     public static ArrayList<Integer>[] map;
+    private ImageView[] playerPieces;
+
     private static final int CELL = 0;
     private static final int PDRIVER = 1;
     private static final int HAMMER = 2;
@@ -153,6 +156,14 @@ public class MapSubScene extends SubScene {
                 MapTile tile = new MapTile(row, column, map[row].get(column), CELL_SIZE, STARTX, STARTY);
                 root.getChildren().add(tile);
             }
+        }
+    }
+
+    public void drawPlayerPiece(ArrayList<Player> players, int numOfPlayers) {
+        ImageView[] playerPieces = new ImageView[numOfPlayers];
+        for (int index = 1; index < numOfPlayers; index++) {
+            playerPieces[index] = new ImageView(new Image(new File("src/main/resources/PNG/pawn" + index + ".png").toURI().toString(), 20, 20, false, true));
+            playerPieces[index].setLayoutX(players.get(index).getX());
         }
     }
 }
