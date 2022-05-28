@@ -5,12 +5,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.PHSBigButton;
-import model.PHSHalfButton;
 import model.Player;
 import model.ResultSubScene;
 
@@ -18,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ResultViewManager {
     public final static String FONT_PATH = "src/main/resources/FONTS/Cafe24Decobox.ttf";

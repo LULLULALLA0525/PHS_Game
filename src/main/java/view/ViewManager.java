@@ -37,6 +37,7 @@ public class ViewManager {
     List<PHSBigButton> menuButtons;
 
     private int numOfPlayers;
+
     public ViewManager() {
         menuButtons = new ArrayList<>();
         mainPane = new AnchorPane();

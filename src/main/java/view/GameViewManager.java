@@ -75,17 +75,17 @@ public class GameViewManager {
         gameStage.show();
     }
 
+    private void createMap() {
+        mapSubScene = new MapSubScene();
+        gamePane.getChildren().add(mapSubScene);
+    }
+
     private void initializePlayers() {
         players = new ArrayList<Player>();
         players.add(new Player(-1, 0, 0)); //dummy player
         for (int index = 1; index <= numOfPlayers; index++) players.add(new Player(index, 0, mapSubScene.getStartRow()));
 
         players.get(currentPlayerIndex).giveTurn(); //Player 1
-    }
-
-    private void createMap() {
-        mapSubScene = new MapSubScene();
-        gamePane.getChildren().add(mapSubScene);
     }
 
     private void createScoreBoard() {
@@ -305,7 +305,7 @@ public class GameViewManager {
         if (!isStay) calculateScore();
         else isStay = false;
         pathInput = "";
-        diceNum = 0;
+        diceNum = 1;
         mapSubScene.updatePlayerPiece(players, numOfPlayers);
     }
 

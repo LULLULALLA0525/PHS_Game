@@ -41,12 +41,10 @@ public class MainSubScene extends SubScene {
             transition.setToX(0);
             isHidden = true;
         }
-
         transition.play();
     }
 
     public AnchorPane getPane() {
         return (AnchorPane) this.getRoot();
     }
-
 }

@@ -1,6 +1,5 @@
 package model;
 
-import javafx.scene.Parent;
 import javafx.scene.SubScene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;

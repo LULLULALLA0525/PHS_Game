@@ -41,5 +41,4 @@ public class PlayLabel extends Label {
         }
         setStyle("-fx-text-fill: BLACK;");
     }
-
 }
