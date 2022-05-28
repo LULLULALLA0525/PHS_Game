@@ -290,6 +290,7 @@ public class GameViewManager {
             updatePlayerStatus();
             do {
                 currentPlayerIndex = currentPlayerIndex % numOfPlayers + 1;
+                if(finishedPlayers == numOfPlayers) break;
             } while (!players.get(currentPlayerIndex).isPlayable());
             players.get(currentPlayerIndex).giveTurn();
             boardLabel.setText("Player" + currentPlayerIndex + "'s Turn!");
@@ -363,7 +364,9 @@ public class GameViewManager {
         if (finishedPlayer == numOfPlayers) {
             gameStage.close();
             gameTimer.stop();
-            menuStage.show();
+
+            ResultViewManager resultViewManager = new ResultViewManager();
+            resultViewManager.showResult(menuStage, players);
         }
     }
 }

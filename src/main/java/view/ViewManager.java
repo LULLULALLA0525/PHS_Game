@@ -93,6 +93,7 @@ public class ViewManager {
             @Override
             public void handle(ActionEvent actionEvent) {
                 GameViewManager gameManager = new GameViewManager();
+                showSubScene(playSubScene);
                 gameManager.createNewGame(mainStage, numOfPlayers);
             }
         });
