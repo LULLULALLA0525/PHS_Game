@@ -34,6 +34,7 @@ public class ResultViewManager {
         resultScene = new Scene(resultPane, RESULT_WIDTH, RESULT_HEIGHT);
         resultStage = new Stage();
         resultStage.setScene(resultScene);
+        resultStage.setTitle("PHS Game");
 
         BackgroundImage background = new BackgroundImage(new Image(new File("src/main/resources/PNG/main_background_green.png").toURI().toString(), 256, 256, false, true),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
