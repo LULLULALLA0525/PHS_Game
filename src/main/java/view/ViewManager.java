@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.PlayLabel;
@@ -29,9 +30,7 @@ public class ViewManager {
     private final static int MENU_BUTTONS_START_Y = 250;
 
     private MainSubScene playSubScene;
-    private MainSubScene scoreSubScene;
-    private MainSubScene helpSubScene;
-    private MainSubScene creditSubScene;
+    private MainSubScene howToPlaySubScene;
 
     private MainSubScene sceneToHide;
 
@@ -44,23 +43,25 @@ public class ViewManager {
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
+
+        createBackground();
+        createTitle();
+
         createSubScenes();
         createButtons();
-        createBackground();
     }
 
-    private void showSubScene(@NotNull MainSubScene subScene) {
-        subScene.moveSubScene();
-        if(sceneToHide == subScene) {
-            sceneToHide = null;
-        }
-        else if(sceneToHide != null) {
-            sceneToHide.moveSubScene();
-            sceneToHide = subScene;
-        }
-        else {
-            sceneToHide = subScene;
-        }
+    private void createBackground() {
+        BackgroundImage background = new BackgroundImage(new Image(new File("src/main/resources/PNG/main_background_green.png").toURI().toString(), 256, 256, false, true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
+        mainPane.setBackground(new Background((background)));
+    }
+
+    private void createTitle() {
+        ImageView title = new ImageView(new Image(new File("src/main/resources/PNG/title.png").toURI().toString(), 800, 200, false, true));
+        title.setLayoutX(112);
+        title.setLayoutY(25);
+        mainPane.getChildren().add(title);
     }
 
     private void createSubScenes() {
@@ -69,24 +70,22 @@ public class ViewManager {
 
         PlayLabel playInfoLabel = new PlayLabel("Choose number of players.");
         playInfoLabel.setLayoutX(110);
-        playInfoLabel.setLayoutY(40);
+        playInfoLabel.setLayoutY(100);
         playSubScene.getPane().getChildren().add(playInfoLabel);
         playSubScene.getPane().getChildren().add(createStartButton());
         playSubScene.getPane().getChildren().add(createHowManyPlayers());
 
-        scoreSubScene = new MainSubScene();
-        mainPane.getChildren().add(scoreSubScene);
+        howToPlaySubScene = new MainSubScene();
+        mainPane.getChildren().add(howToPlaySubScene);
 
-        helpSubScene = new MainSubScene();
-        mainPane.getChildren().add(helpSubScene);
-
-        creditSubScene = new MainSubScene();
-        mainPane.getChildren().add(creditSubScene);
+        ImageView howToPlay = new ImageView(new Image(new File("src/main/resources/PNG/how_to_play.png").toURI().toString(), 600, 450, false, true));
+        howToPlaySubScene.getPane().getChildren().add(howToPlay);
     }
 
+    @NotNull
     private PHSBigButton createStartButton() {
         PHSBigButton startButton = new PHSBigButton("START");
-        startButton.setLayoutX(350);
+        startButton.setLayoutX(310);
         startButton.setLayoutY(300);
 
         startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -101,6 +100,7 @@ public class ViewManager {
         return startButton;
     }
 
+    @NotNull
     private ComboBox createHowManyPlayers() {
         ObservableList<Integer> data = FXCollections.observableArrayList(2, 3, 4);
         ComboBox<Integer> combo = new ComboBox<Integer>(data);
@@ -118,28 +118,29 @@ public class ViewManager {
         return combo;
     }
 
-    public Stage getMainStage() {
-        return mainStage;
-    }
-
-    private void addMenuButton(@NotNull PHSBigButton button) {
-        button.setLayoutX(MENU_BUTTONS_START_X);
-        button.setLayoutY(MENU_BUTTONS_START_Y + menuButtons.size() * 100);
-        menuButtons.add(button);
-        mainPane.getChildren().add(button);
+    private void showSubScene(@NotNull MainSubScene subScene) {
+        subScene.moveSubScene();
+        if(sceneToHide == subScene) {
+            sceneToHide = null;
+        }
+        else if(sceneToHide != null) {
+            sceneToHide.moveSubScene();
+            sceneToHide = subScene;
+        }
+        else {
+            sceneToHide = subScene;
+        }
     }
 
     private void createButtons() {
         createPlayButton();
-        createScoreButton();
-        createHelpButton();
-        createCreditsButton();
+        createHowToPlayButton();
         createExitButton();
     }
 
     private void createPlayButton() {
         PHSBigButton playButton = new PHSBigButton("PLAY");
-        addMenuButton(playButton);
+        addButton(playButton);
 
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -149,45 +150,21 @@ public class ViewManager {
         });
     }
 
-    private void createScoreButton() {
-        PHSBigButton scoreButton = new PHSBigButton("SCORES");
-        addMenuButton(scoreButton);
-
-        scoreButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                showSubScene(scoreSubScene);
-            }
-        });
-    }
-
-    private void createHelpButton() {
-        PHSBigButton helpButton = new PHSBigButton("HELP");
-        addMenuButton(helpButton);
+    private void createHowToPlayButton() {
+        PHSBigButton helpButton = new PHSBigButton("HOW TO PLAY");
+        addButton(helpButton);
 
         helpButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                showSubScene(helpSubScene);
-            }
-        });
-    }
-
-    private void createCreditsButton() {
-        PHSBigButton creditsButton = new PHSBigButton("CREDITS");
-        addMenuButton(creditsButton);
-
-        creditsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                showSubScene(creditSubScene);
+                showSubScene(howToPlaySubScene);
             }
         });
     }
 
     private void createExitButton() {
         PHSBigButton exitButton = new PHSBigButton("EXIT");
-        addMenuButton(exitButton);
+        addButton(exitButton);
 
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -197,11 +174,12 @@ public class ViewManager {
         });
     }
 
-
-    private void createBackground() {
-        BackgroundImage background = new BackgroundImage(new Image(new File("src/main/resources/PNG/main_background_green.png").toURI().toString(), 256, 256, false, true),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
-        mainPane.setBackground(new Background((background)));
+    private void addButton(@NotNull PHSBigButton button) {
+        button.setLayoutX(MENU_BUTTONS_START_X);
+        button.setLayoutY(MENU_BUTTONS_START_Y + menuButtons.size() * 100);
+        menuButtons.add(button);
+        mainPane.getChildren().add(button);
     }
 
+    public Stage getMainStage() { return mainStage; }
 }

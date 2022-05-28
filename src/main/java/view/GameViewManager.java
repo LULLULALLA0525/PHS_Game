@@ -357,11 +357,7 @@ public class GameViewManager {
     }
 
     private void checkGameOver() {
-        int finishedPlayer = 0;
-        for (int index = 1; index <= numOfPlayers; index++)
-            if (!players.get(index).isPlayable()) finishedPlayer++;
-
-        if (finishedPlayer == numOfPlayers) {
+        if (finishedPlayers == numOfPlayers - 1) {
             gameStage.close();
             gameTimer.stop();
 
