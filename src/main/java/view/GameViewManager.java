@@ -66,6 +66,7 @@ public class GameViewManager {
 
         this.numOfPlayers = numOfPlayers;
         initializePlayers();
+        mapSubScene.drawPlayerPiece(players, numOfPlayers);
 
         createScoreBoard();
         createDiceBoard();
@@ -92,6 +93,7 @@ public class GameViewManager {
         gamePane.getChildren().add(scoreBoard);
 
         boardLabel = new BoardLabel("Player" + currentPlayerIndex + "'s Turn!");
+        boardLabel.setStyle("-fx-text-fill: #ff0000;");
         boardLabel.setLayoutX(10);
         boardLabel.setLayoutY(10);
         scoreBoard.getPane().getChildren().add(boardLabel);
@@ -128,26 +130,27 @@ public class GameViewManager {
         diceImage = new ImageView(new Image(new File("src/main/resources/PNG/dice" + diceNum + ".png").toURI().toString(), 126, 126, false, true));
         diceImage.prefWidth(126);
         diceImage.prefHeight(126);
-        diceImage.setLayoutX(20);
+        diceImage.setLayoutX(15);
         diceImage.setLayoutY(20);
         diceBoard.getPane().getChildren().add(diceImage);
 
         diceBoard.getPane().getChildren().add(createRollButton());
+        diceBoard.getPane().getChildren().add(createStayButton());
 
         pathInputField = new TextField();
         pathInputField.setPromptText("PATH");
-        pathInputField.setPrefWidth(130);
+        pathInputField.setPrefWidth(145);
         pathInputField.setPrefHeight(30);
-        pathInputField.setLayoutX(166);
+        pathInputField.setLayoutX(151);
         pathInputField.setLayoutY(20);
         diceBoard.getPane().getChildren().add(pathInputField);
 
         diceBoard.getPane().getChildren().add(createGoButton());
     }
 
-    private PHSBigButton createRollButton() {
-        PHSBigButton rollButton = new PHSBigButton("ROLL");
-        rollButton.setLayoutX(161);
+    private PHSHalfButton createRollButton() {
+        PHSHalfButton rollButton = new PHSHalfButton("ROLL");
+        rollButton.setLayoutX(151);
         rollButton.setLayoutY(106);
 
         rollButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -162,10 +165,36 @@ public class GameViewManager {
                         pathInputField.setPromptText("You can go " + (diceNum - players.get(currentPlayerIndex).getBridgeCards()) + " cells.");
                         players.get(currentPlayerIndex).finishRoll();
                     } else {
+                        pathInputField.setText("");
+                        pathInputField.setPromptText("Player" + currentPlayerIndex + " can't go.");
                         players.get(currentPlayerIndex).takeBridgeCard();
                         players.get(currentPlayerIndex).finishRoll();
                         players.get(currentPlayerIndex).finishGo();
                     }
+                }
+            }
+        });
+        return rollButton;
+    }
+
+    private PHSHalfButton createStayButton() {
+        PHSHalfButton rollButton = new PHSHalfButton("STAY");
+        rollButton.setLayoutX(256);
+        rollButton.setLayoutY(106);
+
+        rollButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (players.get(currentPlayerIndex).isChanceToRoll() && (players.get(currentPlayerIndex).getBridgeCards() > 0)) {
+                    isStay = true;
+                    players.get(currentPlayerIndex).takeBridgeCard();
+                    players.get(currentPlayerIndex).finishRoll();
+                    players.get(currentPlayerIndex).finishGo();
+                    pathInputField.setText("");
+                    pathInputField.setPromptText("PATH");
+                } else if (players.get(currentPlayerIndex).isChanceToRoll()) {
+                    pathInputField.setText("");
+                    pathInputField.setPromptText("You don't have card.");
                 }
             }
         });
@@ -182,15 +211,14 @@ public class GameViewManager {
             public void handle(ActionEvent actionEvent) {
                 if (players.get(currentPlayerIndex).isChanceToGo()) {
                     pathInput = pathInputField.getText();
-
-                    if ((pathInput.length() == diceNum - players.get(currentPlayerIndex).getBridgeCards()) && isValidPath()) {
-                        calculateScore();
+                    String errMsg = isValidPath();
+                    if (errMsg.equals("Pass")) {
                         players.get(currentPlayerIndex).finishGo();
                         pathInputField.setText("");
                         pathInputField.setPromptText("PATH");
                     } else {
                         pathInputField.setText("");
-                        pathInputField.setPromptText("Invalid Path");
+                        pathInputField.setPromptText(errMsg);
                     }
                 }
             }
@@ -198,26 +226,29 @@ public class GameViewManager {
         return goButton;
     }
 
-    private boolean isValidPath() {
+    private String isValidPath() {
+        if (pathInput.length() != diceNum - players.get(currentPlayerIndex).getBridgeCards()) return "Should be " + (diceNum - players.get(currentPlayerIndex).getBridgeCards()) + "cells";
+
         int currentX = players.get(currentPlayerIndex).getX();
         int currentY = players.get(currentPlayerIndex).getY();
 
         for (int i = 0; i < pathInput.length(); i++) {
-            if ((finishedPlayers != 0) && isGoingBack(currentX, currentY, pathInput.charAt(i))) return false;
+            if ((finishedPlayers != 0) && isGoingBack(currentX, currentY, pathInput.charAt(i))) return "Can't go back";
 
             if ((pathInput.charAt(i) == 'U') || (pathInput.charAt(i) == 'u')) currentY--;
             else if ((pathInput.charAt(i) == 'D') || (pathInput.charAt(i) == 'd')) currentY++;
             else if ((pathInput.charAt(i) == 'L') || (pathInput.charAt(i) == 'l')) currentX--;
             else if ((pathInput.charAt(i) == 'R') || (pathInput.charAt(i) == 'r')) currentX++;
-            else return false;
+            else return "";
 
-            if ((currentX < 0) || (currentX > mapSubScene.getMapWidth())) return false;
-            else if ((currentY < 0) || (currentY > mapSubScene.getMapHeight())) return false;
+            if ((currentX < 0) || (currentX > mapSubScene.getMapWidth())) return "Out of map";
+            else if ((currentY < 0) || (currentY > mapSubScene.getMapHeight())) return "Out of map";
 
-            if (mapSubScene.map[currentY].get(currentX) == WALL) return false;
+            if (mapSubScene.map[currentY].get(currentX) == WALL) return "Can't go that way";
             else if (mapSubScene.map[currentY].get(currentX) == BRIDGE) gainedBridgeCards++;
+            else if (mapSubScene.map[currentY].get(currentX) == END) return "Pass";
         }
-        return true;
+        return "Pass";
     }
 
     private boolean isGoingBack(int currentX, int currentY, char pathInputChar) {
@@ -230,50 +261,6 @@ public class GameViewManager {
         else if ((pathInputChar == 'R') || (pathInputChar == 'r')) dest = mapSubScene.mapWithDirection[currentY - 1].get(currentX + 1);
 
         return src > dest;
-    }
-
-    private int gainedScore = 0;
-    private int gainedBridgeCards = 0;
-
-    private void calculateScore() {
-        int currentX = players.get(currentPlayerIndex).getX();
-        int currentY = players.get(currentPlayerIndex).getY();
-
-        gainedScore = 0;
-        gainedBridgeCards = 0;
-
-        for (int i = 0; i < pathInput.length(); i++) {
-            if ((pathInput.charAt(i) == 'U') || (pathInput.charAt(i) == 'u')) currentY--;
-            else if ((pathInput.charAt(i) == 'D') || (pathInput.charAt(i) == 'd')) currentY++;
-            else if ((pathInput.charAt(i) == 'L') || (pathInput.charAt(i) == 'l')) currentX--;
-            else if ((pathInput.charAt(i) == 'R') || (pathInput.charAt(i) == 'r')) currentX++;
-
-            if (mapSubScene.map[currentY].get(currentX) == BRIDGE) gainedBridgeCards++;
-            else if (mapSubScene.map[currentY].get(currentX) == PDRIVER) gainedScore += PDRIVER;
-            else if (mapSubScene.map[currentY].get(currentX) == HAMMER) gainedScore += HAMMER;
-            else if (mapSubScene.map[currentY].get(currentX) == SAW) gainedScore += SAW;
-            else if (mapSubScene.map[currentY].get(currentX) == END) {
-                if (finishedPlayers == 0) gainedScore += 7;
-                else if (finishedPlayers == 1) gainedScore += 3;
-                else if (finishedPlayers == 2) gainedScore += 1;
-                quitThisPlayer();
-            }
-        }
-        giveToPlayer(gainedScore, gainedBridgeCards);
-        players.get(currentPlayerIndex).move(currentX, currentY);
-    }
-
-    private void giveToPlayer(int gainedScore, int gainedBridgeCards) {
-        players.get(currentPlayerIndex).giveScore(gainedScore);
-        players.get(currentPlayerIndex).giveBridgeCard(gainedBridgeCards);
-        playerLabel.get(currentPlayerIndex).setText("Player " + currentPlayerIndex + "'s score : "
-                + String.format("%2d", players.get(currentPlayerIndex).getPlayerScore())
-                + "            X" + players.get(currentPlayerIndex).getBridgeCards());
-    }
-
-    private void quitThisPlayer() {
-        players.get(currentPlayerIndex).quitPlay();
-        playerLabel.get(currentPlayerIndex).setTextFill(Color.RED);
     }
 
     private static final int CELL = 0;
@@ -300,12 +287,72 @@ public class GameViewManager {
 
     private void checkPlayerIsDone() {
         if (!players.get(currentPlayerIndex).isTurnOver()) {
+            updatePlayerStatus();
             do {
                 currentPlayerIndex = currentPlayerIndex % numOfPlayers + 1;
             } while (!players.get(currentPlayerIndex).isPlayable());
             players.get(currentPlayerIndex).giveTurn();
             boardLabel.setText("Player" + currentPlayerIndex + "'s Turn!");
+            if (currentPlayerIndex == 1) boardLabel.setStyle("-fx-text-fill: #ff0000;");
+            else if (currentPlayerIndex == 2) boardLabel.setStyle("-fx-text-fill: #0000ff;");
+            else if (currentPlayerIndex == 3) boardLabel.setStyle("-fx-text-fill: #00ff00;");
+            else if (currentPlayerIndex == 4) boardLabel.setStyle("-fx-text-fill: #ff9600;");
         }
+    }
+
+    private void updatePlayerStatus() {
+        if (!isStay) calculateScore();
+        else isStay = false;
+        pathInput = "";
+        diceNum = 0;
+        mapSubScene.updatePlayerPiece(players, numOfPlayers);
+    }
+
+    private boolean isStay = false;
+    private int gainedScore = 0;
+    private int gainedBridgeCards = 0;
+
+    private void calculateScore() {
+        int currentX = players.get(currentPlayerIndex).getX();
+        int currentY = players.get(currentPlayerIndex).getY();
+
+        gainedScore = 0;
+        gainedBridgeCards = 0;
+
+        for (int i = 0; i < pathInput.length(); i++) {
+            if ((pathInput.charAt(i) == 'U') || (pathInput.charAt(i) == 'u')) currentY--;
+            else if ((pathInput.charAt(i) == 'D') || (pathInput.charAt(i) == 'd')) currentY++;
+            else if ((pathInput.charAt(i) == 'L') || (pathInput.charAt(i) == 'l')) currentX--;
+            else if ((pathInput.charAt(i) == 'R') || (pathInput.charAt(i) == 'r')) currentX++;
+
+            if (mapSubScene.map[currentY].get(currentX) == BRIDGE) gainedBridgeCards++;
+            else if (mapSubScene.map[currentY].get(currentX) == PDRIVER) gainedScore += PDRIVER;
+            else if (mapSubScene.map[currentY].get(currentX) == HAMMER) gainedScore += HAMMER;
+            else if (mapSubScene.map[currentY].get(currentX) == SAW) gainedScore += SAW;
+            else if (mapSubScene.map[currentY].get(currentX) == END) {
+                if (finishedPlayers == 0) gainedScore += 7;
+                else if (finishedPlayers == 1) gainedScore += 3;
+                else if (finishedPlayers == 2) gainedScore += 1;
+                quitThisPlayer();
+                break;
+            }
+        }
+        giveToPlayer(gainedScore, gainedBridgeCards);
+        players.get(currentPlayerIndex).move(currentX, currentY);
+    }
+
+    private void giveToPlayer(int gainedScore, int gainedBridgeCards) {
+        players.get(currentPlayerIndex).giveScore(gainedScore);
+        players.get(currentPlayerIndex).giveBridgeCard(gainedBridgeCards);
+        playerLabel.get(currentPlayerIndex).setText("Player " + currentPlayerIndex + "'s score : "
+                + String.format("%2d", players.get(currentPlayerIndex).getPlayerScore())
+                + "            X" + players.get(currentPlayerIndex).getBridgeCards());
+    }
+
+    private void quitThisPlayer() {
+        finishedPlayers++;
+        players.get(currentPlayerIndex).quitPlay();
+        playerLabel.get(currentPlayerIndex).setTextFill(Color.RED);
     }
 
     private void checkGameOver() {
@@ -313,6 +360,10 @@ public class GameViewManager {
         for (int index = 1; index <= numOfPlayers; index++)
             if (!players.get(index).isPlayable()) finishedPlayer++;
 
-        if (finishedPlayer == numOfPlayers) gameTimer.stop();
+        if (finishedPlayer == numOfPlayers) {
+            gameStage.close();
+            gameTimer.stop();
+            menuStage.show();
+        }
     }
 }

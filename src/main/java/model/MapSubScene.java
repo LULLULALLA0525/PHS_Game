@@ -13,7 +13,8 @@ public class MapSubScene extends SubScene {
     private static final int MAP_WIDTH = 700;
     private static final int MAP_HEIGHT = 700;
 
-    public static ArrayList<Integer>[] map;
+    public ArrayList<Integer>[] map;
+    public ArrayList<Integer>[] mapWithDirection;
     private ImageView[] playerPieces;
 
     private static final int CELL = 0;
@@ -85,10 +86,13 @@ public class MapSubScene extends SubScene {
 
     private void fillMap() {
         map = new ArrayList[mapHeight];
+        mapWithDirection = new ArrayList[mapHeight];
         for (int i = 0; i < mapHeight; i++) {
             map[i] = new ArrayList<Integer>();
+            mapWithDirection[i] = new ArrayList<Integer>();
             for (int j = 0; j < mapWidth; j++) {
                 map[i].add(WALL);
+                mapWithDirection[i].add(1000000);
             }
         }
 
@@ -102,6 +106,7 @@ public class MapSubScene extends SubScene {
 
             int currentRow = startRow;
             int currentColumn = 0;
+            int cnt = 1;
             while((line = mapFile.readLine()) != null) {
                 if (line.startsWith("S") && isStart) map[currentRow].set(currentColumn, START);
                 else if (line.startsWith("C")) map[currentRow].set(currentColumn, CELL);
@@ -115,7 +120,11 @@ public class MapSubScene extends SubScene {
                     break;
                 }
 
-                if (line.startsWith("B")) map[currentRow].set(currentColumn + 1, BRIDGE);
+                mapWithDirection[currentRow].set(currentColumn, cnt++);
+                if (line.startsWith("B")) {
+                    map[currentRow].set(currentColumn + 1, BRIDGE);
+                    mapWithDirection[currentRow].set(currentColumn + 1, cnt);
+                }
 
                 if (isStart){
                     if (line.charAt(2) == 'U') currentRow--;
@@ -159,11 +168,31 @@ public class MapSubScene extends SubScene {
         }
     }
 
+    public int getMapWidth() { return mapWidth; }
+    public int getMapHeight() { return mapHeight; }
+    public int getStartRow() { return startRow; }
+
+
+    private static final int PIECE_SIZE = 40;
     public void drawPlayerPiece(ArrayList<Player> players, int numOfPlayers) {
-        ImageView[] playerPieces = new ImageView[numOfPlayers];
-        for (int index = 1; index < numOfPlayers; index++) {
-            playerPieces[index] = new ImageView(new Image(new File("src/main/resources/PNG/pawn" + index + ".png").toURI().toString(), 20, 20, false, true));
-            playerPieces[index].setLayoutX(players.get(index).getX());
+        AnchorPane root = (AnchorPane) this.getRoot();
+        playerPieces = new ImageView[numOfPlayers + 1];
+        for (int index = 1; index <= numOfPlayers; index++) {
+            playerPieces[index] = new ImageView(new Image(new File("src/main/resources/PNG/pawn" + index + ".png").toURI().toString(), PIECE_SIZE, PIECE_SIZE, false, true));
+            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 - 10);
+            else playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 13);
+            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 + 1);
+            else playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 4);
+            root.getChildren().add(playerPieces[index]);
+        }
+    }
+
+    public void updatePlayerPiece(ArrayList<Player> players, int numOfPlayers) {
+        for (int index = 1; index <= numOfPlayers; index++) {
+            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 - 10);
+            else playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 13);
+            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 + 1);
+            else playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 4);
         }
     }
 }
