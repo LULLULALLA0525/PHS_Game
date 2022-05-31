@@ -13,6 +13,8 @@ public class MapSubScene extends SubScene {
     private static final int MAP_WIDTH = 700;
     private static final int MAP_HEIGHT = 700;
 
+    private String mapName;
+
     public ArrayList<Integer>[] map;
     public ArrayList<Integer>[] mapWithDirection;
     private ImageView[] playerPieces;
@@ -32,13 +34,15 @@ public class MapSubScene extends SubScene {
     private static int mapWidth = 1;
     private static int startRow = 0;
 
-    public MapSubScene() {
+    public MapSubScene(String mapName) {
         super(new AnchorPane(), MAP_WIDTH, MAP_HEIGHT);
         prefWidth(MAP_WIDTH);
         prefHeight(MAP_HEIGHT);
 
         BackgroundImage image = new BackgroundImage(new Image(new File("src/main/resources/PNG/map_panel.png").toURI().toString(), MAP_WIDTH, MAP_HEIGHT, false, true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
+
+        this.mapName = mapName;
 
         AnchorPane root2 = (AnchorPane) this.getRoot();
         root2.setBackground(new Background(image));
@@ -56,7 +60,7 @@ public class MapSubScene extends SubScene {
     }
 
     private void readMap(){
-        File file = new File("src/main/resources/MAPS/map.txt");
+        File file = new File("src/main/resources/MAPS/" + mapName + ".map");
         BufferedReader mapFile;
         try {
             mapFile = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -96,7 +100,7 @@ public class MapSubScene extends SubScene {
             }
         }
 
-        File file = new File("src/main/resources/MAPS/map.txt");
+        File file = new File("src/main/resources/MAPS/" + mapName + ".map");
         BufferedReader mapFile;
         try {
             mapFile = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -173,26 +177,27 @@ public class MapSubScene extends SubScene {
     public int getStartRow() { return startRow; }
 
 
-    private static final int PIECE_SIZE = 40;
+    private static double PIECE_SIZE;
     public void drawPlayerPiece(ArrayList<Player> players, int numOfPlayers) {
         AnchorPane root = (AnchorPane) this.getRoot();
         playerPieces = new ImageView[numOfPlayers + 1];
+        PIECE_SIZE = CELL_SIZE * 4 / 5;
         for (int index = 1; index <= numOfPlayers; index++) {
             playerPieces[index] = new ImageView(new Image(new File("src/main/resources/PNG/pawn" + index + ".png").toURI().toString(), PIECE_SIZE, PIECE_SIZE, false, true));
-            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 - 10);
-            else playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 13);
-            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 + 1);
-            else playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 4);
+            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/4);
+            else playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/3);
+            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 + PIECE_SIZE/40);
+            else playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/10);
             root.getChildren().add(playerPieces[index]);
         }
     }
 
     public void updatePlayerPiece(ArrayList<Player> players, int numOfPlayers) {
         for (int index = 1; index <= numOfPlayers; index++) {
-            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 - 10);
-            else playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 13);
-            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 + 1);
-            else playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - 4);
+            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/4);
+            else playerPieces[index].setLayoutY(players.get(index).getY() * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/3);
+            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 + PIECE_SIZE/40);
+            else playerPieces[index].setLayoutX(players.get(index).getX() * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/10);
         }
     }
 }

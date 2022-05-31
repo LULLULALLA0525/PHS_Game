@@ -36,7 +36,8 @@ public class ViewManager {
 
     List<PHSBigButton> menuButtons;
 
-    private int numOfPlayers;
+    private int numOfPlayers = 0;
+    private String mapName = "";
 
     public ViewManager() {
         menuButtons = new ArrayList<>();
@@ -69,18 +70,55 @@ public class ViewManager {
         playSubScene = new MainSubScene();
         mainPane.getChildren().add(playSubScene);
 
-        PlayLabel playInfoLabel = new PlayLabel("Choose number of players.");
+        PlayLabel playInfoLabel = new PlayLabel("Choose number of players and map.");
         playInfoLabel.setLayoutX(110);
         playInfoLabel.setLayoutY(100);
         playSubScene.getPane().getChildren().add(playInfoLabel);
         playSubScene.getPane().getChildren().add(createStartButton());
         playSubScene.getPane().getChildren().add(createHowManyPlayers());
+        playSubScene.getPane().getChildren().add(createWhichMap());
 
         howToPlaySubScene = new MainSubScene();
         mainPane.getChildren().add(howToPlaySubScene);
 
         ImageView howToPlay = new ImageView(new Image(new File("src/main/resources/PNG/how_to_play.png").toURI().toString(), 600, 450, false, true));
         howToPlaySubScene.getPane().getChildren().add(howToPlay);
+    }
+
+    @NotNull
+    private ComboBox createHowManyPlayers() {
+        ObservableList<Integer> data = FXCollections.observableArrayList(2, 3, 4);
+        ComboBox<Integer> playersCombo = new ComboBox<Integer>(data);
+        playersCombo.setLayoutX(110);
+        playersCombo.setLayoutY(180);
+        playersCombo.setPrefWidth(195);
+        playersCombo.setPrefHeight(40);
+        playersCombo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                numOfPlayers = playersCombo.getValue();
+            }
+        });
+
+        return playersCombo;
+    }
+
+    @NotNull
+    private ComboBox createWhichMap() {
+        ObservableList<String> data = FXCollections.observableArrayList("default", "another");
+        ComboBox<String> mapCombo = new ComboBox<String>(data);
+        mapCombo.setLayoutX(315);
+        mapCombo.setLayoutY(180);
+        mapCombo.setPrefWidth(195);
+        mapCombo.setPrefHeight(40);
+        mapCombo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                mapName = mapCombo.getValue();
+            }
+        });
+
+        return mapCombo;
     }
 
     @NotNull
@@ -92,31 +130,15 @@ public class ViewManager {
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                GameViewManager gameManager = new GameViewManager();
-                showSubScene(playSubScene);
-                gameManager.createNewGame(mainStage, numOfPlayers);
+                if(numOfPlayers != 0 && !mapName.equals("")) {
+                    GameViewManager gameManager = new GameViewManager();
+                    showSubScene(playSubScene);
+                    gameManager.createNewGame(mainStage, mapName, numOfPlayers);
+                }
             }
         });
 
         return startButton;
-    }
-
-    @NotNull
-    private ComboBox createHowManyPlayers() {
-        ObservableList<Integer> data = FXCollections.observableArrayList(2, 3, 4);
-        ComboBox<Integer> combo = new ComboBox<Integer>(data);
-        combo.setLayoutX(110);
-        combo.setLayoutY(180);
-        combo.setPrefWidth(400);
-        combo.setPrefHeight(40);
-        combo.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                numOfPlayers = combo.getValue();
-            }
-        });
-
-        return combo;
     }
 
     private void showSubScene(@NotNull MainSubScene subScene) {

@@ -59,11 +59,11 @@ public class GameViewManager {
         gamePane.setBackground(new Background((background)));
     }
 
-    public void createNewGame (Stage menuStage, int numOfPlayers) {
+    public void createNewGame (Stage menuStage, String mapName, int numOfPlayers) {
         this.menuStage = menuStage;
         this.menuStage.hide();
 
-        createMap();
+        createMap(mapName);
 
         this.numOfPlayers = numOfPlayers;
         initializePlayers();
@@ -76,8 +76,8 @@ public class GameViewManager {
         gameStage.show();
     }
 
-    private void createMap() {
-        mapSubScene = new MapSubScene();
+    private void createMap(String mapName) {
+        mapSubScene = new MapSubScene(mapName);
         gamePane.getChildren().add(mapSubScene);
     }
 
