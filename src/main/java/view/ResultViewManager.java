@@ -69,7 +69,7 @@ public class ResultViewManager {
         } catch (FileNotFoundException e) {
             gameOver.setFont(Font.font("Verdana", 50));
         }
-        gameOver.setStyle("-fx-text-fill: BLACK;");
+        gameOver.setStyle("-fx-text-fill: #381E0D;");
         gameOver.setLayoutX(160);
         gameOver.setLayoutY(20);
 
@@ -86,7 +86,7 @@ public class ResultViewManager {
             } catch (FileNotFoundException e) {
                 rLabel.setFont(Font.font("Verdana", 40));
             }
-            rLabel.setStyle("-fx-text-fill: BLACK;");
+            rLabel.setStyle("-fx-text-fill: #381E0D;");
             rLabel.setLayoutX(20);
             rLabel.setLayoutY(60 + 45 * index);
 

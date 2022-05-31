@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ViewManager {
     public static final int WIDTH = 1024;
@@ -34,10 +35,11 @@ public class ViewManager {
 
     private MainSubScene sceneToHide;
 
-    List<PHSBigButton> menuButtons;
+    private ArrayList<PHSBigButton> menuButtons;
 
     private int numOfPlayers = 0;
-    private String mapName = "";
+    private ArrayList<String> mapNames;
+    private String mapName;
 
     public ViewManager() {
         menuButtons = new ArrayList<>();
@@ -46,11 +48,21 @@ public class ViewManager {
         mainStage = new Stage();
         mainStage.setScene(mainScene);
 
+        checkMapFiles();
+
         createBackground();
         createTitle();
 
         createSubScenes();
         createButtons();
+    }
+
+    private void checkMapFiles() {
+        File mapDirectory = new File("src/main/resources/MAPS/");
+        File[] mapFiles = mapDirectory.listFiles();
+        mapNames = new ArrayList<String>();
+        for(int i = 0; i < Objects.requireNonNull(mapFiles).length; i++)
+            mapNames.add(mapFiles[i].getName().split("\\.")[0]);
     }
 
     private void createBackground() {
@@ -105,7 +117,7 @@ public class ViewManager {
 
     @NotNull
     private ComboBox createWhichMap() {
-        ObservableList<String> data = FXCollections.observableArrayList("default", "another");
+        ObservableList<String> data = FXCollections.observableArrayList(mapNames);
         ComboBox<String> mapCombo = new ComboBox<String>(data);
         mapCombo.setLayoutX(315);
         mapCombo.setLayoutY(180);

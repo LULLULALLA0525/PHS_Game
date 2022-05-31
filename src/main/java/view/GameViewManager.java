@@ -234,7 +234,7 @@ public class GameViewManager {
         int currentY = players.get(currentPlayerIndex).getY();
 
         for (int i = 0; i < pathInput.length(); i++) {
-            if ((finishedPlayers != 0) && isGoingBack(currentX, currentY, pathInput.charAt(i))) return "Can't go back";
+            boolean isBack = (finishedPlayers != 0) && isGoingBack(currentX, currentY, pathInput.charAt(i));
 
             if ((pathInput.charAt(i) == 'U') || (pathInput.charAt(i) == 'u')) currentY--;
             else if ((pathInput.charAt(i) == 'D') || (pathInput.charAt(i) == 'd')) currentY++;
@@ -246,8 +246,10 @@ public class GameViewManager {
             else if ((currentY < 0) || (currentY > mapSubScene.getMapHeight())) return "Out of map";
 
             if (mapSubScene.map[currentY].get(currentX) == WALL) return "Can't go that way";
-            else if (mapSubScene.map[currentY].get(currentX) == BRIDGE) gainedBridgeCards++;
             else if (mapSubScene.map[currentY].get(currentX) == END) return "Pass";
+            else if (isBack) return "Can't go back";
+
+            if (mapSubScene.map[currentY].get(currentX) == BRIDGE) gainedBridgeCards++;
         }
         return "Pass";
     }
@@ -256,10 +258,12 @@ public class GameViewManager {
         int src = mapSubScene.mapWithDirection[currentY].get(currentX);
         int dest = 0;
 
+        if (src == 1) return false;
+
         if ((pathInputChar == 'U') || (pathInputChar == 'u')) dest = mapSubScene.mapWithDirection[currentY - 1].get(currentX);
         else if ((pathInputChar == 'D') || (pathInputChar == 'd')) dest = mapSubScene.mapWithDirection[currentY + 1].get(currentX);
-        else if ((pathInputChar == 'L') || (pathInputChar == 'l')) dest = mapSubScene.mapWithDirection[currentY - 1].get(currentX - 1);
-        else if ((pathInputChar == 'R') || (pathInputChar == 'r')) dest = mapSubScene.mapWithDirection[currentY - 1].get(currentX + 1);
+        else if ((pathInputChar == 'L') || (pathInputChar == 'l')) dest = mapSubScene.mapWithDirection[currentY].get(currentX - 1);
+        else if ((pathInputChar == 'R') || (pathInputChar == 'r')) dest = mapSubScene.mapWithDirection[currentY].get(currentX + 1);
 
         return src > dest;
     }
