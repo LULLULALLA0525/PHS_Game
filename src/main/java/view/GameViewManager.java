@@ -1,8 +1,6 @@
 package view;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -10,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.*;
@@ -22,7 +21,6 @@ public class GameViewManager {
     public final static String FONT_PATH = "src/main/resources/FONTS/Cafe24Decobox.ttf";
 
     private final AnchorPane gamePane;
-    private final Scene gameScene;
     private final Stage gameStage;
 
     private static final int GAME_WIDTH = 768;
@@ -38,7 +36,7 @@ public class GameViewManager {
     private ArrayList<Player> players;
     private int currentPlayerIndex = 1;
     private int finishedPlayers = 0;
-    private BoardLabel boardLabel;
+    private PHSLabel boardLabel;
     private ArrayList<Label> playerLabel;
     private ImageView diceImage;
     private int diceNum = 1;
@@ -47,7 +45,7 @@ public class GameViewManager {
 
     public GameViewManager() {
         gamePane = new AnchorPane();
-        gameScene = new Scene(gamePane, GAME_WIDTH, GAME_HEIGHT);
+        Scene gameScene = new Scene(gamePane, GAME_WIDTH, GAME_HEIGHT);
         gameStage = new Stage();
         gameStage.setScene(gameScene);
         gameStage.setTitle("PHS Game");
@@ -79,8 +77,8 @@ public class GameViewManager {
         this.menuStage = menuStage;
         this.menuStage.hide();
 
-        players = new ArrayList<Player>();
-        players.add(new Player(-1, false,0, 0, 0, 0)); //dummy player
+        players = new ArrayList<>();
+        players.add(new Player(-1, PLAYER_COLORS[0], false,0, 0, 0, 0)); //dummy player
 
         File file = new File("src/main/resources/log.txt");
         BufferedReader logFile;
@@ -106,7 +104,7 @@ public class GameViewManager {
                     int bridgeCards = Integer.parseInt(playerStatus[3]);
                     int x = Integer.parseInt(playerStatus[4]);
                     int y = Integer.parseInt(playerStatus[5]);
-                    players.add(new Player(playerIndex, playable, playerScore, bridgeCards, x, y));
+                    players.add(new Player(playerIndex, PLAYER_COLORS[playerIndex], playable, playerScore, bridgeCards, x, y));
                 }
                 lineNum++;
             }
@@ -128,27 +126,28 @@ public class GameViewManager {
         mapSubScene = new MapSubScene(mapName);
         gamePane.getChildren().add(mapSubScene);
     }
-
+    private static final Paint[] PLAYER_COLORS = {Color.WHITE, Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE};
     private void initializePlayers() {
-        players = new ArrayList<Player>();
-        players.add(new Player(-1, false, 0, 0, 0, 0)); //dummy player
+        players = new ArrayList<>();
+        players.add(new Player(-1, PLAYER_COLORS[0], false, 0, 0, 0, 0)); //dummy player
+
         for (int index = 1; index <= numOfPlayers; index++)
-            players.add(new Player(index, true, 0, 0, 0, mapSubScene.getStartRow()));
+            players.add(new Player(index, PLAYER_COLORS[index], true, 0, 0, 0, mapSubScene.getStartRow()));
 
         players.get(currentPlayerIndex).giveTurn(); //Player 1
     }
 
     private void createScoreBoard() {
-        BoardSubScene scoreBoard = new BoardSubScene();
+        PHSSubScene scoreBoard = new PHSSubScene(300, 166, 34, 768);
         gamePane.getChildren().add(scoreBoard);
 
-        boardLabel = new BoardLabel("Player" + currentPlayerIndex + "'s Turn!");
-        boardLabel.setStyle("-fx-text-fill: #ff0000;");
+        boardLabel = new PHSLabel("Player" + currentPlayerIndex + "'s Turn!", 280, 50);
+        boardLabel.setTextFill(players.get(currentPlayerIndex).getPlayerColor());
         boardLabel.setLayoutX(10);
         boardLabel.setLayoutY(10);
         scoreBoard.getPane().getChildren().add(boardLabel);
 
-        playerLabel = new ArrayList<Label>();
+        playerLabel = new ArrayList<>();
         playerLabel.add(new Label());
         for (int index = 1; index <= numOfPlayers; index++) {
             Label pLabel = new Label("Player " + index + "'s score : "
@@ -159,7 +158,7 @@ public class GameViewManager {
             } catch (FileNotFoundException e) {
                 pLabel.setFont(Font.font("Verdana", 20));
             }
-            pLabel.setStyle("-fx-text-fill: BLACK;");
+            pLabel.setTextFill(Color.BLACK);
             pLabel.setLayoutX(20);
             pLabel.setLayoutY(40 + 24 * index);
 
@@ -174,7 +173,7 @@ public class GameViewManager {
     }
 
     private void createDiceBoard() {
-        DiceSubScene diceBoard = new DiceSubScene();
+        PHSSubScene diceBoard = new PHSSubScene(366, 166, 368, 768);
         gamePane.getChildren().add(diceBoard);
 
         diceImage = new ImageView(new Image(new File("src/main/resources/PNG/dice" + diceNum + ".png").toURI().toString(), 126, 126, false, true));
@@ -198,78 +197,69 @@ public class GameViewManager {
         diceBoard.getPane().getChildren().add(createGoButton());
     }
 
-    private PHSHalfButton createRollButton() {
-        PHSHalfButton rollButton = new PHSHalfButton("ROLL");
+    private PHSButton createRollButton() {
+        PHSButton rollButton = new PHSButton("ROLL", "half");
         rollButton.setLayoutX(151);
         rollButton.setLayoutY(106);
 
-        rollButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if (players.get(currentPlayerIndex).isChanceToRoll()) {
-                    Random random = new Random();
-                    diceNum = random.nextInt(6) + 1;
-                    diceImage.setImage(new Image(new File("src/main/resources/PNG/dice" + diceNum + ".png").toURI().toString(), 126, 126, false, true));
+        rollButton.setOnAction(actionEvent -> {
+            if (players.get(currentPlayerIndex).isChanceToRoll()) {
+                Random random = new Random();
+                diceNum = random.nextInt(6) + 1;
+                diceImage.setImage(new Image(new File("src/main/resources/PNG/dice" + diceNum + ".png").toURI().toString(), 126, 126, false, true));
 
-                    if (diceNum - players.get(currentPlayerIndex).getBridgeCards() > 0) {
-                        pathInputField.setPromptText("You can go " + (diceNum - players.get(currentPlayerIndex).getBridgeCards()) + " cells.");
-                        players.get(currentPlayerIndex).finishRoll();
-                    } else {
-                        pathInputField.setText("");
-                        pathInputField.setPromptText("Player" + currentPlayerIndex + " can't go.");
-                        players.get(currentPlayerIndex).takeBridgeCard();
-                        players.get(currentPlayerIndex).finishRoll();
-                        players.get(currentPlayerIndex).finishGo();
-                    }
-                }
-            }
-        });
-        return rollButton;
-    }
-
-    private PHSHalfButton createStayButton() {
-        PHSHalfButton rollButton = new PHSHalfButton("STAY");
-        rollButton.setLayoutX(256);
-        rollButton.setLayoutY(106);
-
-        rollButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if (players.get(currentPlayerIndex).isChanceToRoll() && (players.get(currentPlayerIndex).getBridgeCards() > 0)) {
-                    isStay = true;
+                if (diceNum - players.get(currentPlayerIndex).getBridgeCards() > 0) {
+                    pathInputField.setPromptText("You can go " + (diceNum - players.get(currentPlayerIndex).getBridgeCards()) + " cells.");
+                    players.get(currentPlayerIndex).finishRoll();
+                } else {
+                    pathInputField.setText("");
+                    pathInputField.setPromptText("Player" + currentPlayerIndex + " can't go.");
                     players.get(currentPlayerIndex).takeBridgeCard();
                     players.get(currentPlayerIndex).finishRoll();
                     players.get(currentPlayerIndex).finishGo();
-                    pathInputField.setText("");
-                    pathInputField.setPromptText("PATH");
-                } else if (players.get(currentPlayerIndex).isChanceToRoll()) {
-                    pathInputField.setText("");
-                    pathInputField.setPromptText("You don't have card.");
                 }
             }
         });
         return rollButton;
     }
 
-    private PHSSmallButton createGoButton() {
-        PHSSmallButton goButton = new PHSSmallButton("GO");
+    private PHSButton createStayButton() {
+        PHSButton rollButton = new PHSButton("STAY", "half");
+        rollButton.setLayoutX(256);
+        rollButton.setLayoutY(106);
+
+        rollButton.setOnAction(actionEvent -> {
+            if (players.get(currentPlayerIndex).isChanceToRoll() && (players.get(currentPlayerIndex).getBridgeCards() > 0)) {
+                isStay = true;
+                players.get(currentPlayerIndex).takeBridgeCard();
+                players.get(currentPlayerIndex).finishRoll();
+                players.get(currentPlayerIndex).finishGo();
+                pathInputField.setText("");
+                pathInputField.setPromptText("PATH");
+            } else if (players.get(currentPlayerIndex).isChanceToRoll()) {
+                pathInputField.setText("");
+                pathInputField.setPromptText("You don't have card.");
+            }
+        });
+        return rollButton;
+    }
+
+    private PHSButton createGoButton() {
+        PHSButton goButton = new PHSButton("GO", "small");
         goButton.setLayoutX(306);
         goButton.setLayoutY(20);
 
-        goButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if (players.get(currentPlayerIndex).isChanceToGo()) {
-                    pathInput = pathInputField.getText();
-                    String errMsg = isValidPath();
-                    if (errMsg.equals("Pass")) {
-                        players.get(currentPlayerIndex).finishGo();
-                        pathInputField.setText("");
-                        pathInputField.setPromptText("PATH");
-                    } else {
-                        pathInputField.setText("");
-                        pathInputField.setPromptText(errMsg);
-                    }
+        goButton.setOnAction(actionEvent -> {
+            if (players.get(currentPlayerIndex).isChanceToGo()) {
+                pathInput = pathInputField.getText();
+                String errMsg = isValidPath();
+                if (errMsg.equals("Pass")) {
+                    players.get(currentPlayerIndex).finishGo();
+                    pathInputField.setText("");
+                    pathInputField.setPromptText("PATH");
+                } else {
+                    pathInputField.setText("");
+                    pathInputField.setPromptText(errMsg);
                 }
             }
         });
@@ -317,18 +307,12 @@ public class GameViewManager {
         return src > dest;
     }
 
-    private static final int CELL = 0;
     private static final int PDRIVER = 1;
     private static final int HAMMER = 2;
     private static final int SAW = 3;
-    private static final int BRIDGE_ENTRY = 4;
     private static final int BRIDGE = 5;
-    private static final int BRIDGE_EXIT = 6;
-    private static final int START = 7;
     private static final int END = 8;
     private static final int WALL = -1;
-
-    private boolean write;
 
     private void createGameLoop() {
         gameTimer = new AnimationTimer() {
@@ -350,10 +334,7 @@ public class GameViewManager {
             } while (!players.get(currentPlayerIndex).isPlayable());
             players.get(currentPlayerIndex).giveTurn();
             boardLabel.setText("Player" + currentPlayerIndex + "'s Turn!");
-            if (currentPlayerIndex == 1) boardLabel.setStyle("-fx-text-fill: #ff0000;");
-            else if (currentPlayerIndex == 2) boardLabel.setStyle("-fx-text-fill: #0000ff;");
-            else if (currentPlayerIndex == 3) boardLabel.setStyle("-fx-text-fill: #00ff00;");
-            else if (currentPlayerIndex == 4) boardLabel.setStyle("-fx-text-fill: #ff9600;");
+            boardLabel.setTextFill(players.get(currentPlayerIndex).getPlayerColor());
             updateLog();
         }
     }
@@ -390,14 +371,13 @@ public class GameViewManager {
     }
 
     private boolean isStay = false;
-    private int gainedScore = 0;
     private int gainedBridgeCards = 0;
 
     private void calculateScore() {
         int currentX = players.get(currentPlayerIndex).getX();
         int currentY = players.get(currentPlayerIndex).getY();
 
-        gainedScore = 0;
+        int gainedScore = 0;
         gainedBridgeCards = 0;
 
         for (int i = 0; i < pathInput.length(); i++) {

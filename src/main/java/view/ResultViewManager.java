@@ -1,16 +1,15 @@
 package view;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import model.PHSBigButton;
+import model.PHSButton;
+import model.PHSSubScene;
 import model.Player;
-import model.ResultSubScene;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +20,6 @@ public class ResultViewManager {
     public final static String FONT_PATH = "src/main/resources/FONTS/Cafe24Decobox.ttf";
 
     private final AnchorPane resultPane;
-    private final Scene resultScene;
     private final Stage resultStage;
 
     private static final int RESULT_WIDTH = 640;
@@ -31,7 +29,7 @@ public class ResultViewManager {
 
     public ResultViewManager() {
         resultPane = new AnchorPane();
-        resultScene = new Scene(resultPane, RESULT_WIDTH, RESULT_HEIGHT);
+        Scene resultScene = new Scene(resultPane, RESULT_WIDTH, RESULT_HEIGHT);
         resultStage = new Stage();
         resultStage.setScene(resultScene);
         resultStage.setTitle("PHS Game");
@@ -44,23 +42,17 @@ public class ResultViewManager {
     public void showResult(Stage menuStage, ArrayList<Player> players) {
         this.menuStage = menuStage;
 
-        int highScore = checkHighScore(players);
+        int highScore = 0;
+        for (int index = 1; index <= players.size() - 1; index++) {
+            if (players.get(index).getPlayerScore() > highScore) highScore = players.get(index).getPlayerScore();
+        }
         createResultBoard(players, highScore);
 
         resultStage.show();
     }
 
-    private int checkHighScore(ArrayList<Player> players) {
-        int highscore = 0;
-        for (int index = 1; index <= players.size() - 1; index++) {
-            if (players.get(index).getPlayerScore() > highscore) highscore = players.get(index).getPlayerScore();
-        }
-
-        return highscore;
-    }
-
     private void createResultBoard(ArrayList<Player> players, int highScore) {
-        ResultSubScene resultSubScene = new ResultSubScene();
+        PHSSubScene resultSubScene = new PHSSubScene(600, 400, 20, 20);
         resultPane.getChildren().add(resultSubScene);
 
         Label gameOver = new Label("Game Over!");
@@ -69,7 +61,7 @@ public class ResultViewManager {
         } catch (FileNotFoundException e) {
             gameOver.setFont(Font.font("Verdana", 50));
         }
-        gameOver.setStyle("-fx-text-fill: #381E0D;");
+        gameOver.setTextFill(Color.web("#381E0D"));
         gameOver.setLayoutX(160);
         gameOver.setLayoutY(20);
 
@@ -93,18 +85,15 @@ public class ResultViewManager {
             resultSubScene.getPane().getChildren().add(rLabel);
         }
 
-        PHSBigButton MenuButton = new PHSBigButton("GO TO MENU");
+        PHSButton MenuButton = new PHSButton("GO TO MENU", "big");
         MenuButton.setLayoutX(200);
         MenuButton.setLayoutY(330);
 
-        MenuButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                File file = new File("src/main/resources/log.txt");
-                file.delete();
-                resultStage.close();
-                menuStage.show();
-            }
+        MenuButton.setOnAction(actionEvent -> {
+            File file = new File("src/main/resources/log.txt");
+            file.delete();
+            resultStage.close();
+            menuStage.show();
         });
 
         resultSubScene.getPane().getChildren().add(MenuButton);

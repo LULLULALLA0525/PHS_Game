@@ -1,20 +1,22 @@
 package model;
 
+import javafx.scene.paint.Paint;
+
 public class Player {
     public final int playerIndex;
+    private final Paint playerColor;
     private boolean playable;
-
     private int playerScore;
     private int bridgeCards;
+    private int x;
+    private int y;
 
     private boolean chanceToRoll = false;
     private boolean chanceToGo = false;
 
-    private int x;
-    private int y;
-
-    public Player(int playerIndex, boolean playable, int playerScore, int bridgeCards, int x, int y) {
+    public Player(int playerIndex, Paint playerColor, boolean playable, int playerScore, int bridgeCards, int x, int y) {
         this.playerIndex = playerIndex;
+        this.playerColor = playerColor;
         this.playable = playable;
         this.playerScore = playerScore;
         this.bridgeCards = bridgeCards;
@@ -27,6 +29,7 @@ public class Player {
     public boolean isChanceToGo() { return this.chanceToGo; }
     public boolean isTurnOver() { return this.chanceToRoll || this.chanceToGo; }
 
+    public Paint getPlayerColor() { return this.playerColor; }
     public int getPlayerScore() { return this.playerScore; }
     public int getBridgeCards() { return this.bridgeCards; }
     public int getX() { return this.x; }
