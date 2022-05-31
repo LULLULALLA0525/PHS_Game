@@ -32,9 +32,9 @@ public class MapSubScene extends SubScene {
     private static final int END = 8;
     private static final int WALL = -1;
 
-    private static int mapHeight = 0;
-    private static int mapWidth = 1;
-    private static int startRow = 0;
+    private int mapHeight = 0;
+    private int mapWidth = 1;
+    private int startRow = 0;
 
     public MapSubScene(String mapName) {
         super(new AnchorPane(), MAP_WIDTH, MAP_HEIGHT);
@@ -83,8 +83,8 @@ public class MapSubScene extends SubScene {
 
             mapHeight = minHeight - maxHeight + 1;
             startRow -= maxHeight;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+            mapFile.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,6 +144,8 @@ public class MapSubScene extends SubScene {
                 else if (line.endsWith("D")) currentRow++;
                 else if (line.endsWith("R")) currentColumn++;
             }
+
+            mapFile.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

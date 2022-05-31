@@ -13,13 +13,11 @@ public class Player {
     private int x;
     private int y;
 
-    public Player(int playerIndex, int x, int y) {
+    public Player(int playerIndex, boolean playable, int playerScore, int bridgeCards, int x, int y) {
         this.playerIndex = playerIndex;
-        this.playable = true;
-
-        this.playerScore = 0;
-        this.bridgeCards = 0;
-
+        this.playable = playable;
+        this.playerScore = playerScore;
+        this.bridgeCards = bridgeCards;
         this.x = x;
         this.y = y;
     }
@@ -33,6 +31,12 @@ public class Player {
     public int getBridgeCards() { return this.bridgeCards; }
     public int getX() { return this.x; }
     public int getY() { return this.y; }
+    public String getPlayerStatus() {
+        if (playable)
+            return String.format("%d-true-%d-%d-%d-%d\n", playerIndex, playerScore, bridgeCards, x, y);
+        else
+            return String.format("%d-false-%d-%d-%d-%d\n", playerIndex, playerScore, bridgeCards, x, y);
+    }
 
     public void giveTurn() { this.chanceToRoll = true; }
     public void finishRoll() {

@@ -14,9 +14,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,17 +33,17 @@ public class GameViewManager {
 
     private AnimationTimer gameTimer;
 
-    private static int diceNum = 1;
-    private static String pathInput;
-
+    private String mapName;
     private int numOfPlayers;
     private ArrayList<Player> players;
-    private static int currentPlayerIndex = 1;
-    private static int finishedPlayers = 0;
+    private int currentPlayerIndex = 1;
+    private int finishedPlayers = 0;
     private BoardLabel boardLabel;
     private ArrayList<Label> playerLabel;
     private ImageView diceImage;
+    private int diceNum = 1;
     private TextField pathInputField;
+    private String pathInput;
 
     public GameViewManager() {
         gamePane = new AnchorPane();
@@ -63,10 +61,60 @@ public class GameViewManager {
         this.menuStage = menuStage;
         this.menuStage.hide();
 
-        createMap(mapName);
-
+        this.mapName = mapName;
         this.numOfPlayers = numOfPlayers;
+
+        createMap(this.mapName);
         initializePlayers();
+        mapSubScene.drawPlayerPiece(players, this.numOfPlayers);
+
+        createScoreBoard();
+        createDiceBoard();
+        createGameLoop();
+
+        gameStage.show();
+    }
+
+    public void loadGame (Stage menuStage) {
+        this.menuStage = menuStage;
+        this.menuStage.hide();
+
+        players = new ArrayList<Player>();
+        players.add(new Player(-1, false,0, 0, 0, 0)); //dummy player
+
+        File file = new File("src/main/resources/log.txt");
+        BufferedReader logFile;
+        try {
+            logFile = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
+            String line;
+            int lineNum = 1;
+
+            while ((line = logFile.readLine()) != null) {
+                if (lineNum == 1) {
+                    this.mapName = line;
+                    createMap(this.mapName);
+                }
+                else if (lineNum == 2) this.numOfPlayers = Integer.parseInt(line);
+                else if (lineNum == 3) currentPlayerIndex = Integer.parseInt(line);
+                else if (lineNum == 4) finishedPlayers = Integer.parseInt(line);
+                else {
+                    String[] playerStatus = line.split("-");
+                    int playerIndex = Integer.parseInt(playerStatus[0]);
+                    boolean playable = Boolean.parseBoolean(playerStatus[1]);
+                    int playerScore = Integer.parseInt(playerStatus[2]);
+                    int bridgeCards = Integer.parseInt(playerStatus[3]);
+                    int x = Integer.parseInt(playerStatus[4]);
+                    int y = Integer.parseInt(playerStatus[5]);
+                    players.add(new Player(playerIndex, playable, playerScore, bridgeCards, x, y));
+                }
+                lineNum++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        players.get(currentPlayerIndex).giveTurn(); //Player 1
         mapSubScene.drawPlayerPiece(players, numOfPlayers);
 
         createScoreBoard();
@@ -83,8 +131,9 @@ public class GameViewManager {
 
     private void initializePlayers() {
         players = new ArrayList<Player>();
-        players.add(new Player(-1, 0, 0)); //dummy player
-        for (int index = 1; index <= numOfPlayers; index++) players.add(new Player(index, 0, mapSubScene.getStartRow()));
+        players.add(new Player(-1, false, 0, 0, 0, 0)); //dummy player
+        for (int index = 1; index <= numOfPlayers; index++)
+            players.add(new Player(index, true, 0, 0, 0, mapSubScene.getStartRow()));
 
         players.get(currentPlayerIndex).giveTurn(); //Player 1
     }
@@ -279,6 +328,8 @@ public class GameViewManager {
     private static final int END = 8;
     private static final int WALL = -1;
 
+    private boolean write;
+
     private void createGameLoop() {
         gameTimer = new AnimationTimer() {
             @Override
@@ -303,6 +354,30 @@ public class GameViewManager {
             else if (currentPlayerIndex == 2) boardLabel.setStyle("-fx-text-fill: #0000ff;");
             else if (currentPlayerIndex == 3) boardLabel.setStyle("-fx-text-fill: #00ff00;");
             else if (currentPlayerIndex == 4) boardLabel.setStyle("-fx-text-fill: #ff9600;");
+            updateLog();
+        }
+    }
+
+    private void updateLog() {
+        File file = new File("src/main/resources/log.txt");
+        BufferedWriter logFile;
+        try {
+            logFile = new BufferedWriter(new FileWriter(file));
+            logFile.write(mapName);
+            logFile.newLine();
+            logFile.write(Integer.toString(numOfPlayers));
+            logFile.newLine();
+            logFile.write(Integer.toString(currentPlayerIndex));
+            logFile.newLine();
+            logFile.write(Integer.toString(finishedPlayers));
+            logFile.newLine();
+            for (int index = 1; index <= numOfPlayers; index++)
+                logFile.write(players.get(index).getPlayerStatus());
+
+            logFile.flush();
+            logFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

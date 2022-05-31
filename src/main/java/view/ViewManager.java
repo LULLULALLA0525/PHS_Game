@@ -169,18 +169,35 @@ public class ViewManager {
 
     private void createButtons() {
         createPlayButton();
+        createLoadButton();
         createHowToPlayButton();
         createExitButton();
     }
 
     private void createPlayButton() {
-        PHSBigButton playButton = new PHSBigButton("PLAY");
+        PHSBigButton playButton = new PHSBigButton("NEW GAME");
         addButton(playButton);
 
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 showSubScene(playSubScene);
+            }
+        });
+    }
+
+    private void createLoadButton() {
+        PHSBigButton loadButton = new PHSBigButton("LOAD GAME");
+        addButton(loadButton);
+
+        loadButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                File file = new File("src/main/resources/log.txt");
+                if (file.exists()) {
+                    GameViewManager gameManager = new GameViewManager();
+                    gameManager.loadGame(mainStage);
+                }
             }
         });
     }

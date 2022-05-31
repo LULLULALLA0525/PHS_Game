@@ -100,6 +100,8 @@ public class ResultViewManager {
         MenuButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                File file = new File("src/main/resources/log.txt");
+                file.delete();
                 resultStage.close();
                 menuStage.show();
             }
