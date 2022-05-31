@@ -8,4 +8,6 @@ module com.example.phs_game {
     exports application;
     exports view;
     opens view to javafx.fxml;
+    exports controller;
+    opens controller to javafx.fxml;
 }

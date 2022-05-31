@@ -2,16 +2,15 @@ package application;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import view.ViewManager;
+import controller.MainController;
 
 import java.io.IOException;
 
 public class Main extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
-        ViewManager manager = new ViewManager();
-        stage = manager.getMainStage();
-        stage.setTitle("PHS GAME");
+    public void start(Stage stage) {
+        MainController controller = new MainController();
+        stage = controller.getMainStage();
         stage.show();
     }
 

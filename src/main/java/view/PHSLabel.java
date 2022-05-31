@@ -1,4 +1,4 @@
-package model;
+package view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 
 public class PHSLabel extends Label {
     public final static String FONT_PATH = "src/main/resources/FONTS/Cafe24Decobox.ttf";
+    public final static String FONT_COLOR = "#381E0D";
 
     public PHSLabel(String text, int width, int height) {
         setText(text);

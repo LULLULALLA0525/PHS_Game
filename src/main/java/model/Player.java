@@ -24,16 +24,16 @@ public class Player {
         this.y = y;
     }
 
-    public boolean isPlayable() { return this.playable; }
-    public boolean isChanceToRoll() { return this.chanceToRoll; }
-    public boolean isChanceToGo() { return this.chanceToGo; }
-    public boolean isTurnOver() { return this.chanceToRoll || this.chanceToGo; }
+    public boolean isPlayable() { return playable; }
+    public boolean isChanceToRoll() { return chanceToRoll; }
+    public boolean isChanceToGo() { return chanceToGo; }
+    public boolean isTurnOver() { return chanceToRoll || chanceToGo; }
 
-    public Paint getPlayerColor() { return this.playerColor; }
-    public int getPlayerScore() { return this.playerScore; }
-    public int getBridgeCards() { return this.bridgeCards; }
-    public int getX() { return this.x; }
-    public int getY() { return this.y; }
+    public Paint getPlayerColor() { return playerColor; }
+    public int getPlayerScore() { return playerScore; }
+    public int getBridgeCards() { return bridgeCards; }
+    public int getX() { return x; }
+    public int getY() { return y; }
     public String getPlayerStatus() {
         if (playable)
             return String.format("%d-true-%d-%d-%d-%d\n", playerIndex, playerScore, bridgeCards, x, y);
@@ -41,19 +41,19 @@ public class Player {
             return String.format("%d-false-%d-%d-%d-%d\n", playerIndex, playerScore, bridgeCards, x, y);
     }
 
-    public void giveTurn() { this.chanceToRoll = true; }
+    public void giveTurn() { chanceToRoll = true; }
     public void finishRoll() {
-        this.chanceToRoll = false;
-        this.chanceToGo = true;
+        chanceToRoll = false;
+        chanceToGo = true;
     }
-    public void finishGo() { this.chanceToGo = false; }
-    public void giveScore(int score) { this.playerScore += score; }
-    public void giveBridgeCard(int amount) { this.bridgeCards += amount; }
-    public void takeBridgeCard() { this.bridgeCards--; }
+    public void finishGo() { chanceToGo = false; }
+    public void giveScore(int score) { playerScore += score; }
+    public void giveBridgeCard(int amount) { bridgeCards += amount; }
+    public void takeBridgeCard() { bridgeCards--; }
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public void quitPlay() { this.playable = false; }
+    public void quitPlay() { playable = false; }
 }

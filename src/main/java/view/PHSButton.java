@@ -1,4 +1,4 @@
-package model;
+package view;
 
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
@@ -13,11 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class PHSButton extends Button {
-    private final static String FONT_PATH = "src/main/resources/FONTS/Cafe24Decobox.ttf";
+    public final static int BUTTON_SIZE = 50;
 
     private int width;
-    private int height;
-    private int fontSize;
+    private final int height = BUTTON_SIZE;
+    private double fontSize;
     private final Background freeBackground;
     private final Background pressedBackground;
 
@@ -26,19 +26,16 @@ public class PHSButton extends Button {
 
         switch (type) {
             case "small" -> {
-                this.width = 50;
-                this.height = 50;
-                this.fontSize = 17;
+                this.width = BUTTON_SIZE;
+                this.fontSize = (double)BUTTON_SIZE / 3;
             }
             case "half" -> {
-                this.width = 100;
-                this.height = 50;
-                this.fontSize = 17;
+                this.width = BUTTON_SIZE * 2;
+                this.fontSize = (double)BUTTON_SIZE / 3;
             }
             case "big" -> {
-                this.width = 200;
-                this.height = 50;
-                this.fontSize = 24;
+                this.width = BUTTON_SIZE * 4;
+                this.fontSize = (double)BUTTON_SIZE / 2 - 1;
             }
         }
         freeBackground = new Background(new BackgroundImage(new Image(new File("src/main/resources/PNG/yellow_" + type + "_button.png").toURI().toString(), width, height, false, true),
@@ -56,11 +53,11 @@ public class PHSButton extends Button {
 
     private void setButtonFont() {
         try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), fontSize));
+            setFont(Font.loadFont(new FileInputStream(PHSLabel.FONT_PATH), fontSize));
         } catch (FileNotFoundException e) {
             setFont(Font.font("Verdana", fontSize));
         }
-        setTextFill(Color.web("#381E0D"));
+        setTextFill(Color.web(PHSLabel.FONT_COLOR));
     }
 
     private void setButtonPressedStyle() {
