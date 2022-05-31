@@ -178,7 +178,6 @@ public class MapSubScene extends SubScene {
     public int getMapHeight() { return mapHeight; }
     public int getStartRow() { return startRow; }
 
-
     private static double PIECE_SIZE;
     public void drawPlayerPiece(ArrayList<Player> players, int numOfPlayers) {
         AnchorPane root = (AnchorPane) this.getRoot();
