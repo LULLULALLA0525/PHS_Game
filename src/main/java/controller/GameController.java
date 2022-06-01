@@ -41,7 +41,7 @@ public class GameController {
         players.add(new Player(-1, GameStage.PLAYER_COLORS[0], false, 0, 0, 0, 0)); //dummy player
 
         for (int index = 1; index <= mainController.getNumOfPlayers(); index++)
-            players.add(new Player(index, GameStage.PLAYER_COLORS[index], true, 0, 0, 0, startRow));
+            players.add(new Player(index, GameStage.PLAYER_COLORS[index], true, 0, 0, startColumn, startRow));
 
         players.get(currentPlayerIndex).giveTurn(); //Player 1
     }
@@ -107,6 +107,7 @@ public class GameController {
     private int mapHeight = 0;
     private int mapWidth = 1;
     private int startRow = 0;
+    private int startColumn = 0;
 
     public void readMap(){
         File file = new File("src/main/resources/MAPS/" + mainController.getMapName() + ".map");
@@ -116,20 +117,29 @@ public class GameController {
 
             String line;
             int goDown = 0;
+            int goRight = 0;
+            int maxWidth = 0;
+            int minWidth = 0;
             int maxHeight = 0;
             int minHeight = 0;
 
             while ((line = mapFile.readLine()) != null) {
                 if (line.endsWith("D")) goDown++;
                 else if (line.endsWith("U")) goDown--;
-                else if (line.endsWith("R")) mapWidth++;
+                else if (line.endsWith("R")) goRight++;
+                else if (line.endsWith("L")) goRight--;
+
+                if (goRight > minWidth) minWidth = goRight;
+                if (goRight < maxWidth) maxWidth = goRight;
 
                 if (goDown > minHeight) minHeight = goDown;
                 if (goDown < maxHeight) maxHeight = goDown;
             }
 
+            mapWidth = minWidth - maxWidth + 1;
             mapHeight = minHeight - maxHeight + 1;
             startRow -= maxHeight;
+            startColumn -= maxWidth;
 
             mapFile.close();
         } catch (IOException e) {
@@ -158,7 +168,7 @@ public class GameController {
             boolean isStart = true;
 
             int currentRow = startRow;
-            int currentColumn = 0;
+            int currentColumn = startColumn;
             int cnt = 1;
             while((line = mapFile.readLine()) != null) {
                 if (line.startsWith("S") && isStart) map.get(currentRow).set(currentColumn, START);
@@ -183,6 +193,7 @@ public class GameController {
                     if (line.charAt(2) == 'U') currentRow--;
                     else if (line.charAt(2) == 'D') currentRow++;
                     else if (line.charAt(2) == 'R') currentColumn++;
+                    else if (line.charAt(2) == 'L') currentColumn--;
                     isStart = false;
                     continue;
                 }
@@ -190,6 +201,7 @@ public class GameController {
                 if (line.endsWith("U")) currentRow--;
                 else if (line.endsWith("D")) currentRow++;
                 else if (line.endsWith("R")) currentColumn++;
+                else if (line.endsWith("L")) currentColumn--;
             }
 
             mapFile.close();
