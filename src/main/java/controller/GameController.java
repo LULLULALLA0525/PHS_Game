@@ -2,10 +2,10 @@ package controller;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import model.*;
+import org.jetbrains.annotations.NotNull;
 import view.*;
 
 import java.io.*;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameController {
-
     private MainController mainController;
     private final GameStage gameStage;
 
@@ -245,6 +244,7 @@ public class GameController {
         }
     }
 
+    @NotNull
     private String isValidPath() {
         if (pathInput.length() != diceNum - players.get(currentPlayerIndex).getBridgeCards()) return "Should be " + (diceNum - players.get(currentPlayerIndex).getBridgeCards()) + "cells";
 
@@ -404,7 +404,6 @@ public class GameController {
     public int getPlayerBridgeCards(int index) { return players.get(index).getBridgeCards(); }
     public int getPlayerX(int index) { return players.get(index).getX(); }
     public int getPlayerY(int index) { return players.get(index).getY(); }
-
     public int getMapWidth() { return mapWidth; }
     public int getMapHeight() { return mapHeight; }
 }

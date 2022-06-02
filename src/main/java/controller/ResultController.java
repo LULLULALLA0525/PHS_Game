@@ -1,13 +1,10 @@
 package controller;
 
-
-import javafx.stage.Stage;
 import view.ResultStage;
 
 import java.io.File;
 
 public class ResultController {
-
     private final MainController mainController;
     private final GameController gameController;
     private final ResultStage resultStage;

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainController {
-
     private final MainStage mainStage;
 
     private int numOfPlayers = 0;

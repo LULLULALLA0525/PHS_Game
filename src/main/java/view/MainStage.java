@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class MainStage extends Stage {
-
     public static final int MAIN_WIDTH = 1024;
     public static final int MAIN_HEIGHT = 768;
 
@@ -26,7 +25,7 @@ public class MainStage extends Stage {
     private PHSSubScene playSubScene;
     private PHSSubScene howToPlaySubScene;
 
-    public MainStage(MainController mainController) {
+    public MainStage(@NotNull MainController mainController) {
         this.mainController = mainController;
         this.mainPane = new AnchorPane();
         Scene mainScene = new Scene(mainPane, MAIN_WIDTH, MAIN_HEIGHT);

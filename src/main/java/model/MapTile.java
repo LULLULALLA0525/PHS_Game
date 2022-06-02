@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.Objects;
 
 public class MapTile extends StackPane {
-
     public static final int CELL = 0;
     public static final int PDRIVER = 1;
     public static final int HAMMER = 2;

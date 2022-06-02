@@ -13,6 +13,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.MapTile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -160,6 +161,7 @@ public class GameStage extends Stage {
         diceBoard.getPane().getChildren().add(createGoButton());
     }
 
+    @NotNull
     private PHSButton createRollButton() {
         PHSButton rollButton = new PHSButton("ROLL", "half");
         rollButton.setLayoutX(151);
@@ -168,6 +170,7 @@ public class GameStage extends Stage {
         return rollButton;
     }
 
+    @NotNull
     private PHSButton createStayButton() {
         PHSButton rollButton = new PHSButton("STAY", "half");
         rollButton.setLayoutX(256);
@@ -176,6 +179,7 @@ public class GameStage extends Stage {
         return rollButton;
     }
 
+    @NotNull
     private PHSButton createGoButton() {
         PHSButton goButton = new PHSButton("GO", "small");
         goButton.setLayoutX(306);

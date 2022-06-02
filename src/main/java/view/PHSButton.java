@@ -7,6 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +22,7 @@ public class PHSButton extends Button {
     private final Background freeBackground;
     private final Background pressedBackground;
 
-    public PHSButton(String text, String type) {
+    public PHSButton(String text, @NotNull String type) {
         setText(text);
 
         switch (type) {
