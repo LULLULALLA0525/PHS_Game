@@ -7,7 +7,6 @@ import javafx.scene.layout.*;
 import java.io.File;
 
 public class PHSSubScene extends SubScene {
-
     public PHSSubScene(int width, int height, int x, int y, String color) {
         super(new AnchorPane(), width, height);
         prefWidth(width);

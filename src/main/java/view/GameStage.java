@@ -28,10 +28,12 @@ public class GameStage extends Stage {
 
     private PHSSubScene mapSubScene;
 
+    private ImageView[] playerPieces;
     private static double CELL_SIZE;
+    private static double PIECE_SIZE;
     private static double STARTX;
     private static double STARTY;
-    private static double PIECE_SIZE;
+
     public static final Paint[] PLAYER_COLORS = {Color.WHITE, Color.RED, Color.BLUE, Color.GREEN, Color.PURPLE};
 
     public PHSLabel boardLabel;
@@ -183,24 +185,24 @@ public class GameStage extends Stage {
     }
 
     public void drawPlayerPiece() {
-        gameController.playerPieces = new ImageView[mainController.getNumOfPlayers() + 1];
+        this.playerPieces = new ImageView[mainController.getNumOfPlayers() + 1];
         PIECE_SIZE = CELL_SIZE * 4 / 5;
         for (int index = 1; index <= mainController.getNumOfPlayers(); index++) {
-            gameController.playerPieces[index] = new ImageView(new Image(new File("src/main/resources/PNG/pawn" + index + ".png").toURI().toString(), PIECE_SIZE, PIECE_SIZE, false, true));
-            if ((index == 1) || (index == 2)) gameController.playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/4);
-            else gameController.playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/3);
-            if ((index == 1) || (index == 3)) gameController.playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 + PIECE_SIZE/40);
-            else gameController.playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/10);
-            mapSubScene.getPane().getChildren().add(gameController.playerPieces[index]);
+            playerPieces[index] = new ImageView(new Image(new File("src/main/resources/PNG/pawn" + index + ".png").toURI().toString(), PIECE_SIZE, PIECE_SIZE, false, true));
+            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/4);
+            else playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/3);
+            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 + PIECE_SIZE/40);
+            else playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/10);
+            mapSubScene.getPane().getChildren().add(playerPieces[index]);
         }
     }
 
     public void updatePlayerPiece() {
         for (int index = 1; index <= mainController.getNumOfPlayers(); index++) {
-            if ((index == 1) || (index == 2)) gameController.playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/4);
-            else gameController.playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/3);
-            if ((index == 1) || (index == 3)) gameController.playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 + PIECE_SIZE/40);
-            else gameController.playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/10);
+            if ((index == 1) || (index == 2)) playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/4);
+            else playerPieces[index].setLayoutY(gameController.getPlayerY(index) * CELL_SIZE + STARTY + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/3);
+            if ((index == 1) || (index == 3)) playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (CELL_SIZE/2 - PIECE_SIZE)/2 + PIECE_SIZE/40);
+            else playerPieces[index].setLayoutX(gameController.getPlayerX(index) * CELL_SIZE + STARTX + (3*CELL_SIZE/2 - PIECE_SIZE)/2 - PIECE_SIZE/10);
         }
     }
 }

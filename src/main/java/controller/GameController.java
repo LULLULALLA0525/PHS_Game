@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
 import model.*;
 import view.*;
 
@@ -23,6 +22,14 @@ public class GameController {
     private ArrayList<Player> players;
     private int currentPlayerIndex = 1;
     private int finishedPlayers = 0;
+
+    public ArrayList<ArrayList<Integer>> map;
+    public ArrayList<ArrayList<Integer>> mapWithDirection;
+
+    private int mapHeight = 0;
+    private int mapWidth = 1;
+    private int startRow = 0;
+    private int startColumn = 0;
 
     private int diceNum = 1;
     private String pathInput;
@@ -89,26 +96,6 @@ public class GameController {
         gameStage.show();
     }
 
-    public ArrayList<ArrayList<Integer>> map;
-    public ArrayList<ArrayList<Integer>> mapWithDirection;
-    public ImageView[] playerPieces;
-
-    private static final int CELL = 0;
-    private static final int PDRIVER = 1;
-    private static final int HAMMER = 2;
-    private static final int SAW = 3;
-    private static final int BRIDGE_ENTRY = 4;
-    private static final int BRIDGE = 5;
-    private static final int BRIDGE_EXIT = 6;
-    private static final int START = 7;
-    private static final int END = 8;
-    private static final int WALL = -1;
-
-    private int mapHeight = 0;
-    private int mapWidth = 1;
-    private int startRow = 0;
-    private int startColumn = 0;
-
     public void readMap(){
         File file = new File("src/main/resources/MAPS/" + mainController.getMapName() + ".map");
         BufferedReader mapFile;
@@ -154,7 +141,7 @@ public class GameController {
             map.add(new ArrayList<>());
             mapWithDirection.add(new ArrayList<>());
             for (int j = 0; j < mapWidth; j++) {
-                map.get(i).add(WALL);
+                map.get(i).add(MapTile.WALL);
                 mapWithDirection.get(i).add(1000000);
             }
         }
@@ -171,21 +158,21 @@ public class GameController {
             int currentColumn = startColumn;
             int cnt = 1;
             while((line = mapFile.readLine()) != null) {
-                if (line.startsWith("S") && isStart) map.get(currentRow).set(currentColumn, START);
-                else if (line.startsWith("C")) map.get(currentRow).set(currentColumn, CELL);
-                else if (line.startsWith("B")) map.get(currentRow).set(currentColumn, BRIDGE_ENTRY);
-                else if (line.startsWith("b")) map.get(currentRow).set(currentColumn, BRIDGE_EXIT);
-                else if (line.startsWith("H")) map.get(currentRow).set(currentColumn, HAMMER);
-                else if (line.startsWith("S")) map.get(currentRow).set(currentColumn, SAW);
-                else if (line.startsWith("P")) map.get(currentRow).set(currentColumn, PDRIVER);
+                if (line.startsWith("S") && isStart) map.get(currentRow).set(currentColumn, MapTile.START);
+                else if (line.startsWith("C")) map.get(currentRow).set(currentColumn, MapTile.CELL);
+                else if (line.startsWith("B")) map.get(currentRow).set(currentColumn, MapTile.BRIDGE_ENTRY);
+                else if (line.startsWith("b")) map.get(currentRow).set(currentColumn, MapTile.BRIDGE_EXIT);
+                else if (line.startsWith("H")) map.get(currentRow).set(currentColumn, MapTile.HAMMER);
+                else if (line.startsWith("S")) map.get(currentRow).set(currentColumn, MapTile.SAW);
+                else if (line.startsWith("P")) map.get(currentRow).set(currentColumn, MapTile.PDRIVER);
                 else if (line.startsWith("E")) {
-                    map.get(currentRow).set(currentColumn, END);
+                    map.get(currentRow).set(currentColumn, MapTile.END);
                     break;
                 }
 
                 mapWithDirection.get(currentRow).set(currentColumn, cnt++);
                 if (line.startsWith("B")) {
-                    map.get(currentRow).set(currentColumn + 1, BRIDGE);
+                    map.get(currentRow).set(currentColumn + 1, MapTile.BRIDGE);
                     mapWithDirection.get(currentRow).set(currentColumn + 1, cnt);
                 }
 
@@ -276,11 +263,11 @@ public class GameController {
             if ((currentX < 0) || (currentX > mapWidth)) return "Out of map";
             else if ((currentY < 0) || (currentY > mapHeight)) return "Out of map";
 
-            if (map.get(currentY).get(currentX) == WALL) return "Can't go that way";
-            else if (map.get(currentY).get(currentX) == END) return "Pass";
+            if (map.get(currentY).get(currentX) == MapTile.WALL) return "Can't go that way";
+            else if (map.get(currentY).get(currentX) == MapTile.END) return "Pass";
             else if (isBack) return "Can't go back";
 
-            if (map.get(currentY).get(currentX) == BRIDGE) gainedBridgeCards++;
+            if (map.get(currentY).get(currentX) == MapTile.BRIDGE) gainedBridgeCards++;
         }
         return "Pass";
     }
@@ -371,11 +358,11 @@ public class GameController {
             else if ((pathInput.charAt(i) == 'L') || (pathInput.charAt(i) == 'l')) currentX--;
             else if ((pathInput.charAt(i) == 'R') || (pathInput.charAt(i) == 'r')) currentX++;
 
-            if (map.get(currentY).get(currentX) == BRIDGE) gainedBridgeCards++;
-            else if (map.get(currentY).get(currentX) == PDRIVER) gainedScore += PDRIVER;
-            else if (map.get(currentY).get(currentX) == HAMMER) gainedScore += HAMMER;
-            else if (map.get(currentY).get(currentX) == SAW) gainedScore += SAW;
-            else if (map.get(currentY).get(currentX) == END) {
+            if (map.get(currentY).get(currentX) == MapTile.BRIDGE) gainedBridgeCards++;
+            else if (map.get(currentY).get(currentX) == MapTile.PDRIVER) gainedScore += MapTile.PDRIVER;
+            else if (map.get(currentY).get(currentX) == MapTile.HAMMER) gainedScore += MapTile.HAMMER;
+            else if (map.get(currentY).get(currentX) == MapTile.SAW) gainedScore += MapTile.SAW;
+            else if (map.get(currentY).get(currentX) == MapTile.END) {
                 if (finishedPlayers == 0) gainedScore += 7;
                 else if (finishedPlayers == 1) gainedScore += 3;
                 else if (finishedPlayers == 2) gainedScore += 1;
@@ -411,7 +398,6 @@ public class GameController {
         }
     }
 
-    public Stage getGameStage() { return gameStage; }
     public int getCurrentPlayerIndex() { return currentPlayerIndex; }
     public Paint getPlayerColor(int index) { return players.get(index).getPlayerColor(); }
     public int getPlayerScore(int index) { return players.get(index).getPlayerScore(); }
