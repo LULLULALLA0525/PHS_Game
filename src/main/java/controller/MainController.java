@@ -70,7 +70,6 @@ public class MainController {
 
         ArrayList<Integer> bridgeEndX = new ArrayList<>();
         ArrayList<Integer> bridgeEndY = new ArrayList<>();
-        String bridgeIsGoing = "O";
 
         File file = new File("src/main/resources/MAPS/" + mapName + ".map");
         BufferedReader mapFile;
@@ -94,11 +93,10 @@ public class MainController {
                 if (!isStart && !isEnd && line.length() != 5) return "Map file format is invalid.";
 
                 if (line.startsWith("B")) {
-                    if (line.endsWith(bridgeIsGoing)) return "Map has bridge cycle.";
+                    if (line.endsWith("L") || line.endsWith("R")) return "Map file is invalid.";
 
                     bridgeEndX.add(x + 2);
                     bridgeEndY.add(y);
-                    bridgeIsGoing = line.split(" ")[2];
                 }
 
                 for (int i = 0; i < bridgeEndX.size(); i++) {

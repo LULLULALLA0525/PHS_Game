@@ -255,24 +255,28 @@ public class GameController {
 
         int currentX = players.get(currentPlayerIndex).getX();
         int currentY = players.get(currentPlayerIndex).getY();
+        int nextX = currentX;
+        int nextY = currentY;
 
         for (int i = 0; i < pathInput.length(); i++) {
-            boolean isBack = (finishedPlayers != 0) && isGoingBack(currentX, currentY, pathInput.charAt(i));
+            if ((pathInput.charAt(i) == 'U') || (pathInput.charAt(i) == 'u')) nextY = currentY - 1;
+            else if ((pathInput.charAt(i) == 'D') || (pathInput.charAt(i) == 'd')) nextY = currentY + 1;
+            else if ((pathInput.charAt(i) == 'L') || (pathInput.charAt(i) == 'l')) nextX = currentX - 1;
+            else if ((pathInput.charAt(i) == 'R') || (pathInput.charAt(i) == 'r')) nextX = currentX + 1;
+            else return "Invalid path";
 
-            if ((pathInput.charAt(i) == 'U') || (pathInput.charAt(i) == 'u')) currentY--;
-            else if ((pathInput.charAt(i) == 'D') || (pathInput.charAt(i) == 'd')) currentY++;
-            else if ((pathInput.charAt(i) == 'L') || (pathInput.charAt(i) == 'l')) currentX--;
-            else if ((pathInput.charAt(i) == 'R') || (pathInput.charAt(i) == 'r')) currentX++;
-            else return "";
+            if ((nextX < 0) || (nextX >= mapWidth)) return "Out of map";
+            else if ((nextY < 0) || (nextY >= mapHeight)) return "Out of map";
 
-            if ((currentX < 0) || (currentX > mapWidth)) return "Out of map";
-            else if ((currentY < 0) || (currentY > mapHeight)) return "Out of map";
+            if (map.get(nextY).get(nextX) == MapTile.WALL) return "Can't go that way";
+            else if (map.get(nextY).get(nextX) == MapTile.END) return "Pass";
 
-            if (map.get(currentY).get(currentX) == MapTile.WALL) return "Can't go that way";
-            else if (map.get(currentY).get(currentX) == MapTile.END) return "Pass";
-            else if (isBack) return "Can't go back";
+            if ((finishedPlayers != 0) && isGoingBack(currentX, currentY, pathInput.charAt(i))) return "Can't go back";
 
-            if (map.get(currentY).get(currentX) == MapTile.BRIDGE) gainedBridgeCards++;
+            if (map.get(nextY).get(nextX) == MapTile.BRIDGE) gainedBridgeCards++;
+
+            currentX = nextX;
+            currentY = nextY;
         }
         return "Pass";
     }

@@ -122,6 +122,9 @@ public class MainStage extends Stage {
             buttons.get(i).setLayoutY(250 + i * PHSButton.BUTTON_SIZE * 2);
             mainPane.getChildren().add(buttons.get(i));
         }
+
+        File file = new File("src/main/resources/log.txt");
+        buttons.get(1).setVisible(file.exists());
     }
 
     @NotNull
