@@ -104,7 +104,7 @@ public class MainStage extends Stage {
         startButton.setOnAction(actionEvent -> {
             if (mainController.getNumOfPlayers() != 0 && !mainController.getMapName().equals("")) {
                 mainController.showSubScene(playSubScene);
-                mainController.newGame();
+                mainController.checkMap();
             }
         });
         return startButton;
@@ -136,7 +136,9 @@ public class MainStage extends Stage {
         PHSButton loadButton = new PHSButton("LOAD GAME", "big");
         loadButton.setOnAction(actionEvent -> {
             File file = new File("src/main/resources/log.txt");
-            if (file.exists()) mainController.loadGame();
+            if (file.exists()) {
+                mainController.loadGame();
+            }
         });
         return loadButton;
     }

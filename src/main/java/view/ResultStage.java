@@ -77,12 +77,12 @@ public class ResultStage extends Stage {
             resultSubScene.getPane().getChildren().add(rLabel);
         }
 
-        PHSButton MenuButton = new PHSButton("GO TO MENU", "big");
-        MenuButton.setLayoutX(200);
-        MenuButton.setLayoutY(330);
+        PHSButton menuButton = new PHSButton("GO TO MENU", "big");
+        menuButton.setLayoutX(200);
+        menuButton.setLayoutY(330);
 
-        MenuButton.setOnAction(actionEvent -> resultController.goToMainMenu());
+        menuButton.setOnAction(actionEvent -> resultController.goToMainMenu());
 
-        resultSubScene.getPane().getChildren().add(MenuButton);
+        resultSubScene.getPane().getChildren().add(menuButton);
     }
 }

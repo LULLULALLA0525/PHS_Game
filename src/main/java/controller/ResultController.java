@@ -17,7 +17,7 @@ public class ResultController {
 
     public void showResult() {
         int highScore = 0;
-        for (int index = 1; index <= mainController.getNumOfPlayers() - 1; index++) {
+        for (int index = 1; index <= mainController.getNumOfPlayers(); index++) {
             if (gameController.getPlayerScore(index) > highScore) highScore = gameController.getPlayerScore(index);
         }
         resultStage.createResultBoard(highScore);

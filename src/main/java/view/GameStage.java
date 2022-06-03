@@ -63,11 +63,8 @@ public class GameStage extends Stage {
         this.mainController.getMainStage().hide();
 
         createMapSubScene();
-        gameController.readMap();
-        gameController.fillMap();
         drawMap();
 
-        gameController.initializePlayers();
         drawPlayerPiece();
 
         createScoreBoard();

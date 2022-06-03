@@ -37,12 +37,15 @@ public class GameController {
 
     public void buildNewGame(MainController mainController) {
         this.mainController = mainController;
+        readMap();
+        fillMap();
+        initializePlayers();
         this.gameStage.buildGame(this.mainController);
         createGameLoop();
         gameStage.show();
     }
 
-    public void initializePlayers() {
+    private void initializePlayers() {
         players = new ArrayList<>();
         players.add(new Player(-1, GameStage.PLAYER_COLORS[0], false, 0, 0, 0, 0)); //dummy player
 
@@ -89,26 +92,28 @@ public class GameController {
 
         players.get(currentPlayerIndex).giveTurn(); //Player 1
 
+        readMap();
+        fillMap();
         this.gameStage.buildGame(this.mainController);
         createGameLoop();
 
         gameStage.show();
     }
 
-    public void readMap(){
+    private void readMap() {
+        int goDown = 0;
+        int goRight = 0;
+        int maxWidth = 0;
+        int minWidth = 0;
+        int maxHeight = 0;
+        int minHeight = 0;
+
         File file = new File("src/main/resources/MAPS/" + mainController.getMapName() + ".map");
         BufferedReader mapFile;
         try {
             mapFile = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
             String line;
-            int goDown = 0;
-            int goRight = 0;
-            int maxWidth = 0;
-            int minWidth = 0;
-            int maxHeight = 0;
-            int minHeight = 0;
-
             while ((line = mapFile.readLine()) != null) {
                 if (line.endsWith("D")) goDown++;
                 else if (line.endsWith("U")) goDown--;
@@ -133,7 +138,7 @@ public class GameController {
         }
     }
 
-    public void fillMap() {
+    private void fillMap() {
         map = new ArrayList<>();
         mapWithDirection = new ArrayList<>();
         for (int i = 0; i < mapHeight; i++) {

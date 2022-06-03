@@ -3,10 +3,12 @@ package controller;
 import javafx.animation.TranslateTransition;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.jetbrains.annotations.NotNull;
 import view.MainStage;
+import view.MapCheckingStage;
 import view.PHSSubScene;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -49,6 +51,83 @@ public class MainController {
 
         transition.play();
     }
+
+    public void checkMap(){
+        MapCheckingStage mapCheckingStage = new MapCheckingStage(this);
+        mapCheckingStage.show();
+        String errMsg = isValidMap();
+        mapCheckingStage.setMsgLabel(errMsg);
+        mapCheckingStage.createMenuButton();
+    }
+
+    @NotNull
+    private String isValidMap() {
+        boolean isStart = true;
+        boolean isEnd = false;
+
+        int x = 0;
+        int y = 0;
+
+        ArrayList<Integer> bridgeEndX = new ArrayList<>();
+        ArrayList<Integer> bridgeEndY = new ArrayList<>();
+        String bridgeIsGoing = "O";
+
+        File file = new File("src/main/resources/MAPS/" + mapName + ".map");
+        BufferedReader mapFile;
+        try {
+            mapFile = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
+            String line;
+            while ((line = mapFile.readLine()) != null) {
+                if (isEnd) return "\"E\" is only placed at last.";
+
+                if (isStart) {
+                    if (!line.startsWith("S")) return "Map should starts with \"S\".";
+                    else if (line.length() != 3) return "Map file format is invalid.";
+                }
+
+                isEnd = line.startsWith("E");
+                if (isEnd){
+                    if (line.length() != 1) return "Map file format is invalid.";
+                }
+
+                if (!isStart && !isEnd && line.length() != 5) return "Map file format is invalid.";
+
+                if (line.startsWith("B")) {
+                    if (line.endsWith(bridgeIsGoing)) return "Map has bridge cycle.";
+
+                    bridgeEndX.add(x + 2);
+                    bridgeEndY.add(y);
+                    bridgeIsGoing = line.split(" ")[2];
+                }
+
+                for (int i = 0; i < bridgeEndX.size(); i++) {
+                    if (bridgeEndX.get(i) == x && bridgeEndY.get(i) == y) {
+                        if (line.startsWith("b")) {
+                            bridgeEndX.remove(i);
+                            bridgeEndY.remove(i);
+                        } else return "Map has endless bridge.";
+                    }
+                }
+
+                if (line.endsWith("U")) y--;
+                else if (line.endsWith("D")) y++;
+                else if (line.endsWith("R")) x++;
+                else if (line.endsWith("L")) return "Map has left path.";
+
+                isStart = false;
+            }
+            if (!isEnd) return "Map should finishes with \"E\".";
+
+            if (bridgeEndX.size() != 0) return "Map has endless bridge";
+
+            mapFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Map loading complete!";
+    }
+
 
     public void newGame() {
         GameController gameController = new GameController();
