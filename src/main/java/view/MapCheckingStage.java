@@ -1,6 +1,5 @@
 package view;
 
-import controller.GameController;
 import controller.MainController;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;

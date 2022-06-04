@@ -4,8 +4,6 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import controller.MainController;
 
-import java.io.IOException;
-
 public class Main extends Application {
     @Override
     public void start(Stage stage) {
